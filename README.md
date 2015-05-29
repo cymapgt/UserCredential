@@ -15,9 +15,6 @@ libraries, particularly for Multi Factor Authentication methods.
     require "cymapgt/usercredential": "1.*"
 
 ## Usage
-The DB package is built for building database connection settings for various database types
-supported by Doctrine DBAL
-
 ### Overview
 This package is intended for PHP applications which use Password for authentication and are
 required to maintain a User Credential policy of sorts. We will also plug in Multi Factor authentication
