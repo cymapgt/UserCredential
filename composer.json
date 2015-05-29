@@ -21,7 +21,7 @@
     "description" : "Package for Password authentication policy management",
     "license" : "BSD 3-clause",
     "require" : {
-        "php" : ">=5.4.0"
+        "php" : ">=5.4.0",
         "ircmaxell/password-compat" : "1.*"
     },
     "require-dev" : {
