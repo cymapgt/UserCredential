@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index xmlns="http://xml.phpdox.net/src" basedir="/home/rhossis/NetBeansProjects/cymapgt/core/application/authentication/UserCredential/src">
+  <namespace name="cymapgt\core\application\authentication\UserCredential\services">
+    <class name="UserCredentialPasswordLoginService" src="services/UserCredentialPasswordLoginService.php" description="UserCredentialPasswordLoginService This service creates password hashes using the BCRYPT cipher" xml="classes/cymapgt_core_application_authentication_UserCredential_services_UserCredentialPasswordLoginService.xml"/>
+  </namespace>
+  <namespace name="cymapgt\core\application\authentication\UserCredential\abstractclass">
+    <class name="UserCredentialAbstract" src="abstractclass/UserCredentialAbstract.php" description="UserCredential This service implements user password policy as well as facilitating plugging in to log in infrastructures that utilize SSO via LDAP and one time password logging in via OATH and SecureId" xml="classes/cymapgt_core_application_authentication_UserCredential_abstractclass_UserCredentialAbstract.xml"/>
+    <interface name="UserCredentialAuthenticationInterface" src="abstractclass/UserCredentialAuthenticationInterface.php" description="UserCredentialAuthenticationInterface Interface that will be used by the Login Services" xml="interfaces/cymapgt_core_application_authentication_UserCredential_abstractclass_UserCredentialAuthenticationInterface.xml"/>
+  </namespace>
+  <namespace name="cymapgt\core\application\authentication\UserCredential">
+    <class name="UserCredentialManager" src="UserCredentialManager.php" description="UserCredentialManager Manage the authentication process" xml="classes/cymapgt_core_application_authentication_UserCredential_UserCredentialManager.xml"/>
+  </namespace>
+  <namespace name="cymapgt\Exception">
+    <class name="UserCredentialException" src="Exception/UserCredentialException.php" description="UserCredentialException This is the exception class for the user credential service" xml="classes/cymapgt_Exception_UserCredentialException.xml"/>
+  </namespace>
+  <namespace name="">
+    <class name="Exception" xml="classes/Exception.xml"/>
+  </namespace>
+</index>

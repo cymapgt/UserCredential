@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<source xmlns="http://xml.phpdox.net/src">
+  <dir name="/home/rhossis/NetBeansProjects/cymapgt/core/application/authentication/UserCredential/src">
+    <dir name="services">
+      <file name="UserCredentialPasswordLoginService.php" size="7748" time="2014-10-01T07:56:09+03:00" unixtime="1412139369" sha1="65f807e07eb8079ca493612cf2def75610fc985d" xml="tokens/services/UserCredentialPasswordLoginService.php.xml"/>
+    </dir>
+    <dir name="config">
+      <file name="NamedConstant.php" size="917" time="2015-05-22T17:25:19+03:00" unixtime="1432304719" sha1="113dd292f82da515be0923e5de8ff2bcefda8106" xml="tokens/config/NamedConstant.php.xml"/>
+    </dir>
+    <dir name="abstractclass">
+      <file name="UserCredentialAbstract.php" size="32192" time="2015-05-13T15:02:45+03:00" unixtime="1431518565" sha1="18505d051946880b32edb546bdb4dc44f9763c1b" xml="tokens/abstractclass/UserCredentialAbstract.php.xml"/>
+      <file name="UserCredentialAuthenticationInterface.php" size="5567" time="2014-10-01T07:56:09+03:00" unixtime="1412139369" sha1="7ab2e4dff3206293cc998c4e8940e7f6837d1819" xml="tokens/abstractclass/UserCredentialAuthenticationInterface.php.xml"/>
+    </dir>
+    <file name="UserCredentialManager.php" size="2435" time="2015-05-13T14:22:03+03:00" unixtime="1431516123" sha1="a7d0aeb15f5d889ee4baa4b293e812f376ed39dc" xml="tokens/UserCredentialManager.php.xml"/>
+    <dir name="Exception">
+      <file name="UserCredentialException.php" size="364" time="2014-10-01T07:56:09+03:00" unixtime="1412139369" sha1="7ea32c23a024af21c1a629003e4029078e9dfc23" xml="tokens/Exception/UserCredentialException.php.xml"/>
+    </dir>
+  </dir>
+</source>
