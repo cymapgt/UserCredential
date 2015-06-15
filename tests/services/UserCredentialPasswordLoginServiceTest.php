@@ -58,6 +58,5 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->object->authenticate());
         $this->object->setPassword('12345');
         $this->assertEquals(false, $this->object->authenticate());
-)
     }
 }
