@@ -22,7 +22,8 @@
     "license" : "BSD 3-clause",
     "require" : {
         "php" : ">=5.4.0",
-        "ircmaxell/password-compat" : "1.*"
+        "ircmaxell/password-compat" : "1.*",
+        "cymapgt/phpass" : "v4.0.0beta1"
     },
     "require-dev" : {
         "phpunit/phpunit" : "4.*"

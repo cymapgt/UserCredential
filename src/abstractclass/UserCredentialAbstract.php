@@ -2,37 +2,19 @@
 namespace cymapgt\core\application\authentication\UserCredential\abstractclass;
 
 use cymapgt\Exception\UserCredentialException;
+use Phpass\Strength;
 
 /**
- * UserCredential
- * This service implements user password policy as well as facilitating
- * plugging in to log in infrastructures that utilize SSO via LDAP
- * and one time password logging in via OATH and SecureId
+ * This package implements user password policy and credential management
  *
- * @category    
+ * @category    security
  * @package     cymapgt.core.application.authentication.UserCredential
- * @copyright   Copyright (c) 2014 Cymap
+ * @copyright   Copyright (c) 2015 Cymap
  * @author      Cyril Ogana <cogana@gmail.com>
  * @abstract
  * 
- * The objectives of the user credential class are:
- *      - Add password entropy component – suggestion and enforcement
- *      - Add ability to choose number of simultaneous logins allowed for users
- *      - Add ability to choose user allowed login devices
- *      - Add ability to choose user allowed login IP/host
- *      - Add ability to choose user  allowed log in days
- *      - Add ability to choose user allowed log in time
- *      - Add ability to set the tenor of the user account in the system
- *      - Add ability to reset a users password
- *      - Add ability to lock users passwords for violation of system rules
- *      - Two factor authentication component
- *      - Password expiry frequency component
- *      - RSA one time password authentication component
- *      - Embed the user management module to the maker-checker module process such that if required, any creation/update of users information requires 2, 3 or N step authentication e.g. created by, modified by
- *      - Add option to email a user that a new account has been created on his/her behalf
- *      - The password hash should be at least sha256
- * 
- *      - See http://www.owasp.org/images/0/08/OWASP_SCP_Quick_Reference_Guide_v2.pdf
+ *      - See http://www.owasp.org/images/0/08/OWASP_SCP_Quick_Reference_Guide_v2.pdf 
+ *           (authentication section)
  */
 
 abstract class UserCredentialAbstract
@@ -40,44 +22,49 @@ abstract class UserCredentialAbstract
     private $_userProfile         = array();      //Array containing user information to use in the class
     
     private $_baseEntropySetting  = array();      //This is the default entropy setting
-    private $_baseEntropyOverride = false;        //A flag to turn off base entropy enforcement
+    private $_baseEntropyOverride = false;        //A flag to turn off base entropy enforcement 
     private $_udfEntropySetting   = array();      //A variable to store the user defined entropy
 
     private $_basePasswordPolicy  = array();      //Base password policy maintained by UserCredential class
-    private $_udfPasswordPolicy   = array();      //Udf password policy maintained by UserCredential class
+    private $_udfPasswordPolicy   = array();      //Udf password policy input by the user
 	
         
-    //Constructor method
-    public function __construct($userProfile){
+    /*
+     * Constructor method
+     * Cyril Ogana <cogana@gmail.com> - 2015-07-18
+     * 
+     * @param array userProfile - array of user credential information
+     */
+    public function __construct($userProfile) {
         $this->_initialize($userProfile);
     }
 	
     /**
-     * function initialize() - Initialize the classes default settings
-     * Cyril Ogana <cogana@gmail.com> - 2013-05-13
+     * Initialize the classes default settings (base entropy)
+     * Cyril Ogana <cogana@gmail.com> - 2015-07-18
      *
-     * @param array / object  userProfile
+     * @param array /ArrayAccess  userProfile
      *
      * @access private
      */             
-    private function _initialize($userProfile){
+    private function _initialize($userProfile) {
         $this->_initializeProfile($userProfile);
         $this->_initializeBaseEntropy();
         $this->_initializeBasePasswordPolicy();
     }
 	
    /** 
-    * function initializeProfile() - Function to initialize user profile data
+    * initializes the user profiles data as per the user credentials provided to the constructor method
     * 
-    * Cyril Ogana <cogana@gmail.com> - 2013-05-13 
+    * Cyril Ogana <cogana@gmail.com> - 2015-07-18
     *
-    * @param  array / object $userProfile
+    * @param  array / ArrayAccess  $userProfile
     *
     * @access private
     */
-    private function _initializeProfile($userProfile){
+    private function _initializeProfile($userProfile) {
         //validate that user profile has the correct information
-        if(!is_array($userProfile)
+        if (!is_array($userProfile)
             || !isset($userProfile['username'])
             || !isset($userProfile['password'])
             || !isset($userProfile['fullname'])			
@@ -89,65 +76,65 @@ abstract class UserCredentialAbstract
             || !isset($userProfile['policyinfo'])
             || !is_array($userProfile['policyinfo'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the user profile is not properly initialized');
+            throw new UserCredentialException('The user profile is not properly initialized', 1000);
         }
         $this->_userProfile = $userProfile;
     }
 
     /**
-     * function initializeBaseEntropy() = Initialize to hard coded default base tntropy
+     * Initialize entopy requirements to recommended default base entropy  as per OWASP
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @access private
      */ 	
     private function _initializeBaseEntropy() {
         //initialize if not already initialized as array
-        if(!is_array($this->_baseEntropySetting)){
-                $this->_baseEntropySetting = array();
+        if (!is_array($this->_baseEntropySetting)) {
+            $this->_baseEntropySetting = array();
         }
 
-        $this->_baseEntropySetting['min_pass_len'] = 8;
-        $this->_baseEntropySetting['uppercase']    = array(
-                                                        'toggle'  => true,
-                                                        'min_len' => 2
-                                                     );
-        $this->_baseEntropySetting['numeric']     = array(
-                                                        'toggle'  => true,
-                                                        'min_len' => 1														
-                                                    );
-        $this->_baseEntropySetting['lowercase']   = array(
-                                                        'toggle'  => true,
-                                                        'min_len' => 2
-                                                    );
-        $this->_baseEntropySetting['special']     = array(
-                                                        'toggle'  => true,
-                                                        'min_len' => 1
-                                                    );
-        $this->_baseEntropyOverride = false;
+        $this->_baseEntropySetting['min_pass_len'] = 8;    //minimum password length
+        $this->_baseEntropySetting['max_consecutive_chars'] = 2;    //minimum characters to repeat consecutively
+        $this->_baseEntropySetting['uppercase'] = array (     //requirement and length for various character types
+            'toggle'  => true,
+            'min_len' => 2
+        );
+        $this->_baseEntropySetting['numeric'] = array(
+            'toggle'  => true,
+            'min_len' => 1														
+        );
+        $this->_baseEntropySetting['lowercase'] = array(
+            'toggle'  => true,
+            'min_len' => 2
+        );
+        $this->_baseEntropySetting['special'] = array(
+            'toggle'  => true,
+            'min_len' => 1
+        );
+        $this->_baseEntropyOverride = false;    //override the reommended settings?
         $this->_setUdfEntropy($this->_baseEntropySetting);
     }
     
     /**
-     * function _initializeBasePasswordPolicy() = Initialize to hard coded default base policy
+     * Initialize policy requirements to recommended default base entropy  as per OWASP
      * Cyril Ogana <cogana@gmail.com>
      * 2014-02-11
      *
      * @access private
      */ 	
     private function _initializeBasePasswordPolicy() {
-        $this->_basePasswordPolicy['illegal_attempts_limit']           = 3;
-        $this->_basePasswordPolicy['password_reset_frequency']         = 45;
-        $this->_basePasswordPolicy['password_repeat_minimum']          = 5;
-        $this->_basePasswordPolicy['illegal_attempts_penalty_seconds'] = 600;
+        $this->_basePasswordPolicy['illegal_attempts_limit'] = 3; //count
+        $this->_basePasswordPolicy['password_reset_frequency'] = 45; //days
+        $this->_basePasswordPolicy['password_repeat_minimum'] = 5; //count
+        $this->_basePasswordPolicy['illegal_attempts_penalty_seconds'] = 600; //seconds
         $this->_setUdfPasswordPolicy($this->_basePasswordPolicy);
     }
     
     /**
-     * function getBaseEntropy() = Get the base entropy data structure
+     * Get the base entropy data structure
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @return array / Object
      * 
@@ -155,15 +142,15 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _getBaseEntropy() {
-	if(isset($this->_baseEntropySetting)){
+	if (isset($this->_baseEntropySetting)) {
             return $this->_baseEntropySetting;
         }
     }
     
     /**
-     * function getBasePasswordPolicy() = Get the base password policy
+     *  Get the base password policy
      * Cyril Ogana <cogana@gmail.com>
-     * 2014-02-11
+     * 2015-07-18
      *
      * @return array / Object
      * 
@@ -171,15 +158,15 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _getBasePasswordPolicy() {
-	if(isset($this->_basePasswordPolicy)){
+	if (isset($this->_basePasswordPolicy)) {
             return $this->_basePasswordPolicy;
         }
     }  
 
     /**
-     * function setUdfEntropy() = Set the user defined entropy setting
+     * Set the user defined entropy setting
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @param  array / object entropyObj - array or object implementing ArrayAccess
      *
@@ -188,91 +175,94 @@ abstract class UserCredentialAbstract
      */ 
      final protected function _setUdfEntropy($entropyObj) {
         //initialize if not already initialized as array
-        if(!is_array($this->_udfEntropySetting)
-           || 
+        if (!is_array($this->_udfEntropySetting)
+           ||
            (!is_object($this->_udfEntropySetting)
             &&
             $this->_udfEntropySetting instanceof \ArrayAccess)
-        ){
+        ) {
             $this->_udfEntropySetting = array();
         }
 
         //validate the array / object
-        if(!is_array($entropyObj)){
-            if(!is_object($entropyObj)
+        if (!is_array($entropyObj)) {
+            if (!is_object($entropyObj)
                 || !($entropyObj instanceof \ArrayAccess)
-            ){
-                //todo: throw exception here
-                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface');
+            ) {
+                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface', 1001);
             }
         }
 
         //validate that minimum password len has the correct indices, then set it
-        if(!isset($entropyObj['min_pass_len'])
+        if (!isset($entropyObj['min_pass_len'])
             || !is_int($entropyObj['min_pass_len']) 
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the minimum password length hasn\'t been set');
+            throw new UserCredentialException('The minimum password length hasn\'t been set', 1002);
         }
         $this->_udfEntropySetting['min_pass_len'] = $entropyObj['min_pass_len'];
 
+        //validate that minimum allowed password characters to repeat has been set
+        if (!isset($entropyObj['max_consecutive_chars'])
+            || !is_int($entropyObj['max_consecutive_chars'])
+        ) {
+            throw new UserCredentialException('The minimum allowed consecutive character repetition hasn\'t been set', 1003);
+        }
+        
+        $this->_udfEntropySetting['max_consecutive_chars'] =  $entropyObj['max_consecutive_chars'];
+        
         //validate that uppercase snippet has correct indices, then set it
-        if(!isset($entropyObj['uppercase'])
+        if (!isset($entropyObj['uppercase'])
             || !is_array($entropyObj['uppercase'])
             || !isset($entropyObj['uppercase']['toggle'])
             || !is_bool($entropyObj['uppercase']['toggle'])
             || !isset($entropyObj['uppercase']['min_len'])
             || !is_int($entropyObj['uppercase']['min_len'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the uppercase settings must be an array containing toggle and min upper length');
+            throw new UserCredentialException('The uppercase settings must be an array containing toggle and min upper length', 1004);
         }
         $this->_udfEntropySetting['uppercase'] = $entropyObj['uppercase'];
 
         //validate that lowercase snippet has correct indices, then set it
-        if(!isset($entropyObj['lowercase'])
+        if (!isset($entropyObj['lowercase'])
            || !is_array($entropyObj['lowercase'])
            || !isset($entropyObj['lowercase']['toggle'])
            || !is_bool($entropyObj['lowercase']['toggle'])
            || !isset($entropyObj['lowercase']['min_len'])
            || !is_int($entropyObj['lowercase']['min_len'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the lowercase settings must be an array containing toggle and min lower length');
+            throw new UserCredentialException('The lowercase settings must be an array containing toggle and min lower length', 1005);
         }
         $this->_udfEntropySetting['lowercase'] = $entropyObj['lowercase'];
 
         //validate that numeric chars snippet has correct indices, then set it
-        if(!isset($entropyObj['numeric'])
+        if (!isset($entropyObj['numeric'])
             || !is_array($entropyObj['numeric'])
             || !isset($entropyObj['numeric']['toggle'])
             || !is_bool($entropyObj['numeric']['toggle'])
             || !isset($entropyObj['numeric']['min_len'])
             || !is_int($entropyObj['numeric']['min_len'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the numeric settings must be an array containing toggle and min lower length');
+            throw new UserCredentialException('The numeric settings must be an array containing toggle and min lower length', 1006);
         }
         $this->_udfEntropySetting['numeric'] = $entropyObj['numeric'];
 
         //validate that special chars snippet has correct indices, then set it
-        if(!isset($entropyObj['special'])
+        if (!isset($entropyObj['special'])
             || !is_array($entropyObj['special'])
             || !isset($entropyObj['special']['toggle'])
             || !is_bool($entropyObj['special']['toggle'])
             || !isset($entropyObj['special']['min_len'])
             || !is_int($entropyObj['special']['min_len'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the uppercase settings must be an array containing toggle and min upper length');
+            throw new UserCredentialException('the uppercase settings must be an array containing toggle and min upper length', 1007);
         }
         $this->_udfEntropySetting['special'] = $entropyObj['special'];
     }
     
     /**
-     * function setUdfPasswordPolicy() = Set the user defined password policy
+     * Set the user defined password policy
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @param  array / object entropyObj - array or object implementing ArrayAccess
      *
@@ -281,49 +271,45 @@ abstract class UserCredentialAbstract
      */ 
      final protected function _setUdfPasswordPolicy($entropyObj) {
         //initialize if not already initialized as array
-        if(!is_array($this->_udfPasswordPolicy)
+        if (!is_array($this->_udfPasswordPolicy)
            || 
            (!is_object($this->_udfPasswordPolicy)
             &&
             $this->_udfPasswordPolicy instanceof \ArrayAccess)
-        ){
+        ) {
             $this->_udfPasswordPolicy = array();
         }
 
         //validate the array / object
-        if(!is_array($entropyObj)){
+        if (!is_array($entropyObj)) {
             if(!is_object($entropyObj)
                 || !($entropyObj instanceof \ArrayAccess)
-            ){
-                //todo: throw exception here
-                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface');
+            ) {
+                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface', 1008);
             }
         }
 
         //validate that illegal attempts limit has correct indices, then set it
-        if(!isset($entropyObj['illegal_attempts_limit'])
-            || !is_int($entropyObj['illegal_attempts_limit']) 
+        if (!isset($entropyObj['illegal_attempts_limit'])
+            || !is_int($entropyObj['illegal_attempts_limit'])
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('the illegal attempts limit hasn\'t been set');
+            throw new UserCredentialException('The illegal attempts limit hasn\'t been set', 1009);
         }
         $this->_udfPasswordPolicy['illegal_attempts_limit'] = $entropyObj['illegal_attempts_limit'];
 
         //validate that password reset frequency has correct indices, then set it
-        if(!isset($entropyObj['password_reset_frequency'])
+        if (!isset($entropyObj['password_reset_frequency'])
             || !is_int($entropyObj['password_reset_frequency']) 
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('The password reset frequency hasn\'t been set');
+            throw new UserCredentialException('The password reset frequency hasn\'t been set', 1010);
         }
         $this->_udfPasswordPolicy['password_reset_frequency'] = $entropyObj['password_reset_frequency'];
 
         //validate that passwordd repeat minimum has correct indices, then set it
-        if(!isset($entropyObj['password_repeat_minimum'])
+        if (!isset($entropyObj['password_repeat_minimum'])
             || !is_int($entropyObj['password_repeat_minimum']) 
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('The password repeat minimum has not been set');
+            throw new UserCredentialException('The password repeat minimum has not been set', 1011);
         }
         $this->_udfPasswordPolicy['password_repeat_minimum'] = $entropyObj['password_repeat_minimum'];
 
@@ -331,16 +317,15 @@ abstract class UserCredentialAbstract
         if(!isset($entropyObj['illegal_attempts_penalty_seconds'])
             || !is_int($entropyObj['illegal_attempts_penalty_seconds']) 
         ) {
-            //TODO: throw exception here
-            throw new UserCredentialException('The illegal attempts penalty seconds has not been set');
+            throw new UserCredentialException('The illegal attempts penalty seconds has not been set', 1012);
         }
         $this->_udfPasswordPolicy['illegal_attempts_penalty_seconds'] = $entropyObj['illegal_attempts_penalty_seconds'];
-    }    
+    }
 	
     /**
-     * function getUdfEntropy() = Get the udf entropy data structure
+     * Get the udf entropy data structure
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @return array / Object
      * 
@@ -348,15 +333,15 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _getUdfEntropy() {
-        if(isset($this->_udfEntropySetting)){
+        if (isset($this->_udfEntropySetting)) {
             return $this->_udfEntropySetting;
         }
     }
     
      /**
-     * function getUdfPasswordPolicy() = Get the udf password policy
+     * Get the udf password policy
      * Cyril Ogana <cogana@gmail.com>
-     * 2014-02-11
+     * 2015-07-18
      *
      * @return array / Object
      * 
@@ -364,17 +349,17 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _getUdfPasswordPolicy() {
-        if(isset($this->_udfPasswordPolicy)){
+        if (isset($this->_udfPasswordPolicy)) {
             return $this->_udfPasswordPolicy;
         }
     }  
 	
     /**
-     * function setBaseEntropyOverride() = Set the value of base entropy
+     * Set the value of base entropy toggle flag
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
-     * @param  bool toggle - True or false to toggle the attribute
+     * @param True or false to toggle the attribute
      *
      * @return void
      * 
@@ -382,17 +367,17 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _setBaseEntropyOverride($toggle) {
-        if(isset($this->_baseEntropyOverride)
+        if (isset($this->_baseEntropyOverride)
            && is_bool($toggle)
-        ){
+        ) {
             $this->_baseEntropyOverride = $toggle;   
         }
     }
 
     /**
-     * function getBaseEntropyOverride = Get the current value of base entropy override attrib
+     * Get the current value of base entropy override attrib
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2013-07-18
      *
      * @return bool
      * 
@@ -400,15 +385,15 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _getBaseEntropyOverride() {
-	if(isset($this->_baseEntropyOverride)){
+	if (isset($this->_baseEntropyOverride)) {
             return $this->_baseEntropyOverride;
         }
     }
 	
     /**
-     * function regexBuildPattern() - build simple regex patterns based on the settings
+     * build simple regex patterns based on particular entropy settings
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2015-07-18
      *
      * @param  int patternCode - integer representing defined constants for variable code
      * @param  int matchCount  - integer representing the count of matched transactions
@@ -417,10 +402,10 @@ abstract class UserCredentialAbstract
      *
      * @access private
      */	
-    private function _regexBuildPattern($patternCode, $matchCount){
+    private function _regexBuildPattern($patternCode, $matchCount) {
         $patternRegex = '';
 
-        switch($patternCode) {
+        switch ($patternCode) {
             case 1:
                 $patternRegex = "(?=(?:.*[A-Z]){{$matchCount}})";
             break;
@@ -433,21 +418,22 @@ abstract class UserCredentialAbstract
             case 4:
                 $patternRegex = '(?=(?:.*([-@%+\/\'!#$^*?:.)(}{\[\]~_])){'.$matchCount.'})';
             break;
+            case 5:
+                $patternRegex = '((.)\2}?(\2{'.$matchCount.'}))';
             default:
             break;
         }
-        if(!(isset($patternRegex))){
-            //TODO: Throw exception here
-            throw new UserCredentialException('The regex pattern is not set');
+        if (!(isset($patternRegex))) {
+            throw new UserCredentialException('The regex pattern is not set', 1013);
         }
 
         return $patternRegex;
     }
     
     /**
-    * function _getPasswordEntropyDescription() - get a description of the required password entropy
+    * Get a description of the required password entropy
     * Cyril Ogana <cogana@gmail.com>
-    * 2014-02-11
+    * 2015-07-18
     *    
     * @return string
     *
@@ -462,14 +448,14 @@ abstract class UserCredentialAbstract
         $isFirstEntropy = false;
         $concatenator   = '';
         
-        if($entropyObj['lowercase']['min_len']){
+        if ($entropyObj['lowercase']['min_len']) {
             $lowercaseLen   = $entropyObj['lowercase']['min_len'];
             $description   .= " at least $lowercaseLen lowercase characters";
             $hasEntropy     = true;
             $isFirstEntropy = true;
         }
         
-        if($entropyObj['uppercase']['min_len']){
+        if ($entropyObj['uppercase']['min_len']) {
             $isFirstEntropy = $isFirstEntropy == true ? false : true;
             $concatenator   = $isFirstEntropy == true ? ''    : ',';
             $uppercaseLen   = $entropyObj['uppercase']['min_len'];
@@ -477,7 +463,7 @@ abstract class UserCredentialAbstract
             $hasEntropy     = true;     
         }
         
-        if($entropyObj['numeric']['min_len']){
+        if ($entropyObj['numeric']['min_len']) {
             $isFirstEntropy = $isFirstEntropy == true ? false : true;
             $concatenator   = $isFirstEntropy == true ? ''    : ',';
             $numericLen     = $entropyObj['numeric']['min_len'];
@@ -485,7 +471,7 @@ abstract class UserCredentialAbstract
             $hasEntropy     = true;     
         }
 
-        if($entropyObj['special']['min_len']){
+        if ($entropyObj['special']['min_len']) {
             $isFirstEntropy = $isFirstEntropy == true ? false : true;
             $concatenator   = $isFirstEntropy == true ? ''    : ',';
             $specialLen     = $entropyObj['special']['min_len'];
@@ -493,7 +479,7 @@ abstract class UserCredentialAbstract
             $hasEntropy     = true;     
         }
         
-        if(!$hasEntropy){
+        if (!$hasEntropy) {
             $description = 'There is no minimum password entropy policy in place';
         }
         
@@ -501,9 +487,9 @@ abstract class UserCredentialAbstract
     }
 
     /**
-    * function _getPasswordLengthDescription() - get a description of the required password entropy
+    * Get a description of the required password entropy
     * Cyril Ogana <cogana@gmail.com>
-    * 2014-02-11
+    * 2015-07-18
     *    
     * @return string
     *
@@ -513,34 +499,64 @@ abstract class UserCredentialAbstract
     final protected function _getPasswordLengthDescription(){
         $entropyObj = $this->_getUdfEntropy();
         
-        if($entropyObj['min_pass_len']){
+        if ($entropyObj['min_pass_len']) {
             return "The minimum password length is {$entropyObj['min_pass_len']} characters";
-        }else{
+        } else {
             return 'There is no minimum password length policy in place';
         }
     }
+    
+    /**
+     * Get a description for the entropy policy regarding repeating a character consecutively
+     * Cyril Ogana<cogana@gmail.com>
+     * 2015-07-18
+     * 
+     * @return string
+     * 
+     * @access protected
+     * @final
+     */
+    final protected function _getPasswordCharacterRepeatDescription() {
+        $entropyObj = $this->_getUdfEntropy();
+        
+        if ($entropyObj['max_consecutive_chars']) {
+            return "The maximum allowed number of repeated characters in password of same type (e.g. aaa) is {$entropyObj['max_consecutive_chars']}";
+        } else {
+            return "There is no maximum allowed number of repeated characters in password of the same type (e.g. aaa)";
+        }
+    }
 
+    /**
+    * Get a description of the required password policy
+    * Cyril Ogana <cogana@gmail.com>
+    * 2015-07-18
+    *    
+    * @return string
+    *
+    * @access protected
+    * @final
+    */        
     final protected function _getPasswordPolicyDescription($policyType){
         $policyObj = $this->_getUdfPasswordPolicy();
 
-        switch($policyType) {
+        switch ($policyType) {
             case 'illegal_attempts_limit':
-                if($policyObj['illegal_attempts_limit']){
+                if ($policyObj['illegal_attempts_limit']) {
                     return 'The illegal login attempts limit is '.$policyObj['illegal_attempts_limit'];
                 }
             break;
             case 'password_reset_frequency':
-                if($policyObj['password_reset_frequency']){
+                if ($policyObj['password_reset_frequency']) {
                     return 'The password reset frequency is '.$policyObj['password_reset_frequency'].' days';
                 }
             break;
             case 'password_repeat_minimum':
-                if($policyObj['password_repeat_minimum']){
+                if ($policyObj['password_repeat_minimum']) {
                     return 'A user is not allowed to repeat any of their last '.$policyObj['password_repeat_minimum'].' passwords';
                 }
             break;
             case 'illegal_attempts_penalty_seconds':
-                if($policyObj['illegal_attempts_penalty_seconds']){
+                if ($policyObj['illegal_attempts_penalty_seconds']) {
                     return 'A user account will be temporarily locked out after the illegal login attempts limit for '.$policyObj['illegal_attempts_penalty_seconds'].' seconds; and will require admin intervention if the offense is repeated';
                 }
             break;
@@ -551,9 +567,9 @@ abstract class UserCredentialAbstract
     }
  
     /**
-     * function validateEntropy() - validate the entropy of the password in the userprofile
+     * validate the entropy of the password in the userprofile
      * Cyril Ogana <cogana@gmail.com>
-     * 2013-05-13
+     * 2018-07-18
      *
      * @return bool
      *
@@ -562,13 +578,12 @@ abstract class UserCredentialAbstract
      */
      final protected function _validateEntropy(){
         //validate that required indices exist
-        if(!isset($this->_userProfile['username'])
-               || !isset($this->_userProfile['password'])
-               || !isset($this->_userProfile['fullname'])
-               || !isset($this->_userProfile['passhist'])
-            ) {
-                //TODO: Throw exception here
-            throw new Exception('The username and password are not set');
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+        ) {
+            throw new Exception('The username and password are not set', 1014);
         }
 
         //validate that user is not using part of username as password
@@ -583,6 +598,7 @@ abstract class UserCredentialAbstract
             $namePartsArr[] = strtolower($nameItem);
         }
         
+        //iterate and search for occurrences of name parts
         foreach ($namePartsArr as $namePart) {
             $namePartCast = (string) $namePart;
             
@@ -590,14 +606,14 @@ abstract class UserCredentialAbstract
                 throw new UserCredentialException('Password cannot contain username or any of your names', \USERCREDENTIAL_ACCOUNTPOLICY_NAMEINPASSWD);
             }
         }
-        //determine which entropy to use (base or udf)
+        //set which entropy to use (base or udf)
         $entropyObj = $this->_udfEntropySetting;
 
         $validateCaseRegex = '';
         $upperCaseRegex    = '';
 
         //build the password entropy regex uppercase
-        if($entropyObj['uppercase']['toggle'] == true){
+        if ($entropyObj['uppercase']['toggle'] == true) {
             //@TODO: Implement as constants the patterns
             $pattern    = 1;
             $matchCount = ($entropyObj['uppercase']['min_len'] ? $entropyObj['uppercase']['min_len'] : 1);
@@ -607,7 +623,7 @@ abstract class UserCredentialAbstract
         $lowerCaseRegex = '';
 
         //build the password entropy regex lowercase
-        if($entropyObj['lowercase']['toggle'] == true){
+        if ($entropyObj['lowercase']['toggle'] == true) {
             $pattern    = 2;
             $matchCount = ($entropyObj['lowercase']['min_len'] ? $entropyObj['lowercase']['min_len'] : 1);
             $lowerCaseRegex = $this->_regexBuildPattern($pattern,$matchCount);
@@ -616,7 +632,7 @@ abstract class UserCredentialAbstract
         $numericRegex = '';
 
         //build the password entropy regex numbers
-        if($entropyObj['numeric']['toggle'] == true){
+        if ($entropyObj['numeric']['toggle'] == true) {
             $pattern    = 3;
             $matchCount = ($entropyObj['numeric']['min_len'] ? $entropyObj['numeric']['min_len'] : 1);
             $numericRegex = $this->_regexBuildPattern($pattern, $matchCount);
@@ -625,7 +641,7 @@ abstract class UserCredentialAbstract
         $specialRegex = '';
 
         //build the password entropy regex special
-        if($entropyObj['special']['toggle'] == true){
+        if ($entropyObj['special']['toggle'] == true) {
             $pattern    = 4;
             $matchCount = ($entropyObj['special']['min_len'] ? $entropyObj['special']['min_len'] : 1);
             $specialRegex = $this->_regexBuildPattern($pattern, $matchCount);
@@ -637,44 +653,114 @@ abstract class UserCredentialAbstract
         $testVal = preg_match($validateCaseRegex,$this->_userProfile['password']);
 
         if ($testVal === false) {
-            throw new UserCredentialException('A fatal error occured in the password validation', 0);
-        } elseif($testVal == false) {
+            throw new UserCredentialException('A fatal error occured in the password validation', 1015);
+        } elseif ($testVal == false) {
             throw new UserCredentialException('The password does not meet the minimum entropy. '. $this->_getPasswordEntropyDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
         } else {
             return true;
         }
     }
     
+    /**
+     * validate the password length of the users credentials
+     * Cyril Ogana <cogana@gmail.com>
+     * 2018-07-18
+     *
+     * @return bool
+     *
+     * @access protected
+     * @final
+     */    
     final protected function _validateLength() {
         //validate that required indices exist
-        if(!isset($this->_userProfile['username'])
-               || !isset($this->_userProfile['password'])
-               || !isset($this->_userProfile['fullname'])
-               || !isset($this->_userProfile['passhist'])
-            ) {
-                //TODO: Throw exception here
-            throw new Exception('The username and password are not set');
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+        ) {
+            throw new Exception('The username and password are not set', 1016);
         }
 
         //determine which entropy to use (base or udf)
         $entropyObj = $this->_udfEntropySetting;
         
+        //perform length check
         if (strlen($this->_userProfile['password']) < $entropyObj['min_pass_len']) {
-            throw new UserCredentialException('The password does not meet required length. '.$this->_getPasswordLengthDescription());
+            throw new UserCredentialException('The password does not meet required length. '.$this->_getPasswordLengthDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
         }
         
         return true;
     }
     
+    /**
+     * validate that there are no instances of consecutive character repetitions beyond allowed number
+     * in the users password string
+     * 
+     * Cyril Ogana <cogana@gmail.com>
+     * 2018-07-18
+     *
+     * @return bool
+     *
+     * @access protected
+     * @final
+     */      
+    final protected function _validateConsecutiveCharacterRepeat() {
+        //validate that required indices exist
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+        ) {
+            throw new Exception('The username and password are not set', 1017);
+        }
+
+        //determine which entropy to use (base or udf)
+        $entropyObj = $this->_udfEntropySetting;
+        $maxConsecutiveChars = (int) ($entropyObj['max_consecutive_chars']);
+        
+        //because we offset by -2 when doing regex, if the limit is not greater or equal to 2, default to 2
+        if (!($maxConsecutiveChars >= 2)) {
+            $maxConsecutiveChars = 2;
+        }
+        
+        //offset for purposes of matching (TODO: fix?)
+        $maxConsecutiveCharsRegexOffset = ++$maxConsecutiveChars - 2;
+        
+        //build regex
+        $maxConsecutiveCharsRegex = '/' . $this->_regexBuildPattern(5, $maxConsecutiveCharsRegexOffset) . '/';
+        //die(print_r($maxConsecutiveCharsRegex));
+        $testVal = preg_match($maxConsecutiveCharsRegex,$this->_userProfile['password']);
+
+        if ($testVal === false) {
+            throw new UserCredentialException('A fatal error occured in the password validation', 1018);
+        } elseif ($testVal == true) {
+            throw new UserCredentialException('The password violates policy about consecutive character repetitions. '. $this->_getPasswordCharacterRepeatDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
+        } else {
+            return true;
+        }        
+        
+        return true;
+    }
+    
+    /**
+     * validate the password policy during authentication
+     * 
+     * Cyril Ogana <cogana@gmail.com>
+     * 2018-07-18
+     *
+     * @return bool
+     *
+     * @access protected
+     * @final
+     */    
     final protected function _validatePolicy() {
         //validate that required indices exist
-        if(!isset($this->_userProfile['username'])
-               || !isset($this->_userProfile['password'])
-               || !isset($this->_userProfile['fullname'])
-               || !isset($this->_userProfile['passhist'])
-            ) {
-                //TODO: Throw exception here
-            throw new Exception('The username and password are not set');
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+         ) {
+            throw new Exception('The username and password are not set', 1019);
         }
 
         //determine which entropy to use (base or udf)
@@ -703,15 +789,25 @@ abstract class UserCredentialAbstract
         return true;        
     }
     
+    /**
+     * validate the password policy during process of making a password change
+     * 
+     * Cyril Ogana <cogana@gmail.com>
+     * 2018-07-18
+     *
+     * @return bool
+     *
+     * @access protected
+     * @final
+     */      
     final protected function _validatePolicyAtChange() {
         //validate that required indices exist
-        if(!isset($this->_userProfile['username'])
-               || !isset($this->_userProfile['password'])
-               || !isset($this->_userProfile['fullname'])
-               || !isset($this->_userProfile['passhist'])
-            ) {
-                //TODO: Throw exception here
-            throw new Exception('The username and password are not set');
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+         ) {
+            throw new Exception('The username and password are not set', 1020);
         }
 
         //determine which entropy to use (base or udf)
@@ -721,6 +817,7 @@ abstract class UserCredentialAbstract
         $passHistory = $this->_userProfile['passhist'];
         $passHistoryRequired = array_slice($passHistory, 0, ((int) $policyObj['password_repeat_minimum']));
         
+        //iterate and verify
         foreach ($passHistoryRequired as $passHistoryItem) {
             if (password_verify($this->_userProfile['password'], $passHistoryItem)) {
                 throw new UserCredentialException('User cannot repeat any of their ' . $policyObj['password_repeat_minimum'] . ' last passwords', \USERCREDENTIAL_ACCOUNTPOLICY_REPEATERROR);
@@ -730,15 +827,26 @@ abstract class UserCredentialAbstract
         return true;        
     }
     
+    /**
+     * Check that a user can change password in case you want to implement limits on changing passwords
+     * only once in 24 hours
+     * 
+     * Cyril Ogana <cogana@gmail.com>
+     * 2018-07-18
+     *
+     * @return bool
+     *
+     * @access protected
+     * @final
+     */       
     final protected function _canChangePassword() {
          //validate that required indices exist
-        if(!isset($this->_userProfile['username'])
-               || !isset($this->_userProfile['password'])
-               || !isset($this->_userProfile['fullname'])
-               || !isset($this->_userProfile['passhist'])
-            ) {
-            //TODO: Throw exception here
-            throw new Exception('The username and password are not set');
+        if (!isset($this->_userProfile['username'])
+            || !isset($this->_userProfile['password'])
+            || !isset($this->_userProfile['fullname'])
+            || !isset($this->_userProfile['passhist'])
+        ) {
+            throw new Exception('The username and password are not set', 1021);
         }
   
         //Verify if the password was changed today or server has been futuredated
@@ -753,7 +861,33 @@ abstract class UserCredentialAbstract
     }
     
     /**
-        * Abstract functions
+     * Check password strength using NIST Or Wolfram adapter (default NIST)
+     * See https://github.com/rchouinard/phpass
+     * Many thanks to Ryan Chouinard for the phpass package
+     * 
+     * @param string $passwordString - The password string to evaluate
+     * @param int $strengthAdapter - Named constant representing adapter to use (default NIST)
+     * 
+     * @return int
+     * 
+     * @access public
+     * @static
+     */
+    public static function passwordStrength($passwordString, $strengthAdapter = \PHPASS_PASSWORDSTRENGTHADAPTER_NIST) {
+        if ($strengthAdapter == \PHPASS_PASSWORDSTRENGTHADAPTER_WOLFRAM) {
+            $strengthAdapter = new Strength\Adapter\Wolfram;        
+        } elseif ($strengthAdapter == \PHPASS_PASSWORDSTRENGTHADAPTER_NIST) {
+            $strengthAdapter = new Strength\Adapter\Nist;
+        } else {
+            throw new Exception('Phpass strength adapter calculator must be NIST or Wolfram. Wrong Flag provivded.', 1022);
+        }
+
+        $phpassStrength = new Strength($strengthAdapter);
+        return $phpassStrength->calculate($passwordString);
+    }
+    
+    /**
+        * Abstract methods for concrete implementation
         */
     abstract public function getBaseEntropy();
     abstract public function getBaseEntropyOverride();
@@ -768,6 +902,7 @@ abstract class UserCredentialAbstract
     abstract public function setUdfPasswordPolicy($entropyObj);
     abstract public function validateEntropy();
     abstract public function validateLength();
+    abstract public function validateConsecutiveCharacterRepeat();
     abstract public function validatePolicy();
     abstract public function validatePolicyAtChange();
     abstract public function canChangePassword();

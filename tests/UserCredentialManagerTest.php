@@ -56,8 +56,10 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     {
         $baseEntropy = $this->object->getBaseEntropy();
         $this->assertInternalType('array', $baseEntropy);
-        $this->assertEquals(5, count($baseEntropy));
+        $this->assertEquals(6, count($baseEntropy));
         $this->assertEquals('min_pass_len', key($baseEntropy));
+        next($baseEntropy);
+        $this->assertEquals('max_consecutive_chars', key($baseEntropy));
         next($baseEntropy);
         $this->assertEquals('uppercase', key($baseEntropy));
         next($baseEntropy);        
@@ -101,9 +103,10 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     {
         $udfEntropy = $this->object->getUdfEntropy();
         $this->assertInternalType('array', $udfEntropy);
-        $this->assertEquals(5, count($udfEntropy));
-        reset($udfEntropy);
+        $this->assertEquals(6, count($udfEntropy));
         $this->assertEquals('min_pass_len', key($udfEntropy));
+        next($udfEntropy);
+        $this->assertEquals('max_consecutive_chars', key($udfEntropy));
         next($udfEntropy);
         $this->assertEquals('uppercase', key($udfEntropy));
         next($udfEntropy);        
@@ -176,6 +179,14 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
+     * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
+     */
+    public function testValidateConsecutiveCharacterRepeat() {
+        $this->assertInternalType('bool', $this->object->validateConsecutiveCharacterRepeat());
+        $this->assertEquals(true, $this->object->validateConsecutiveCharacterRepeat());
+    }
+    
+    /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateLength
      */
     public function testValidateLengthException() {
@@ -191,12 +202,39 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $this->object->validateLength();
     }
     
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
+     */ 
+    public function testValidateConsecutiveCharacterRepeatException() {
+        //here we repeat 2 characters
+        $userProfileAlmostWeak = array("username"=>"c.ogana",
+                          "password"=>"%stron9Pa55sButRepetition!sBaD2015",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(),
+                          "policyinfo"=>array(),            
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfileAlmostWeak);
+        $this->assertTrue($this->object->validateConsecutiveCharacterRepeat());
+        
+        //here we repeat 3 characters, and expect an exception as per base entropy
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException','The password violates policy about consecutive character repetitions.');
+        $userProfileWeak = array("username"=>"c.ogana",
+                          "password"=>"%stron9Pa555sButRepetition!sBaD2015",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(),
+                          "policyinfo"=>array(),            
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfileWeak); 
+        $this->object->validateConsecutiveCharacterRepeat();
+    }
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
      */
     public function testValidatePolicyLoginAttemptSuspendedException() {
-         $this->setExpectedException('cymapgt\Exception\UserCredentialException','The account has exceeded login attempts and is locked.');
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException','The account has exceeded login attempts and is locked.');
         $userProfileWeak = array("username"=>"c.ogana",
                           "password"=>"tinypw",
                           "fullname"=>"Cyril Ogana",
@@ -310,5 +348,14 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $canChangePassword = $this->object->canChangePassword();
         $this->assertInternalType('bool', $canChangePassword);
         $this->assertEquals(false, $canChangePassword);
+    }
+    
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::passwordStrength
+     */    
+    public function testPasswordStrength() {
+        $passwordString = 'MySecretPassword';
+        $this->assertEquals(30, UserCredentialManager::passwordStrength($passwordString));
+        $this->assertEquals(59, UserCredentialManager::passwordStrength($passwordString, \PHPASS_PASSWORDSTRENGTHADAPTER_WOLFRAM));
     }
 }

@@ -36,7 +36,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
     private $_multiFactorStages  = array(); //the stages of multi factor auth
     
     //Constructor method
-    public function __construct(){
+    public function __construct() {
         
     }        
   
@@ -49,7 +49,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */             
-    public function setUsePassword($flag){
+    public function setUsePassword($flag) {
         $this->_userPasswordFlag = (bool) $flag;
         $this->_multiFactorFlag  = true;
     }
@@ -63,7 +63,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */             
-    public function getUsePassword(){
+    public function getUsePassword() {
         return $this->_usePasswordFlag;
     }
     
@@ -76,7 +76,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      *
      * @access public
      */             
-    public function setPassword($password){
+    public function setPassword($password) {
         $this->_inputPassword = (string) $password;
     }
     
@@ -91,7 +91,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getPassword($unhashed = false){
+    public function getPassword($unhashed = false) {
         if((bool) $unhashed === true){
             return $this->_inputPassword;
         }else{
@@ -108,7 +108,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setMultiFactor($flag){
+    public function setMultiFactor($flag) {
         $this->_multiFactorFlag = (bool) $flag;
     }
     
@@ -123,7 +123,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public 
      */
-    public function setMultiFactorHandler($handler){
+    public function setMultiFactorHandler($handler) {
         $this->_multiFactorHandler = (string) $handler;
     }
     
@@ -137,7 +137,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getMultiFactorHandler(){
+    public function getMultiFactorHandler() {
         return $this->_multiFactorHandler;
     }
     
@@ -151,7 +151,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setMultiFactorStages(Array $stages){
+    public function setMultiFactorStages(Array $stages) {
         $this->_multiFactorStages = $stages;
     }
     
@@ -164,7 +164,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getMultiFactorStages(){
+    public function getMultiFactorStages() {
         return $this->_multiFactorStages;
     }
     
@@ -175,12 +175,12 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function initialize(){
+    public function initialize() {
         if(($this->_inputPassword == '')
             && ($this->_currentUsername == '')
             && ($this->_currentPassword == '')
         ){
-            throw new UserCredentialException("The usercredential login service is not initialized with all parameters");
+            throw new UserCredentialException("The usercredential login service is not initialized with all parameters", 2000);
         }
     }
     
@@ -191,7 +191,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function authenticate(){
+    public function authenticate() {
         return password_verify($this->_inputPassword, $this->_currentPassword);
     }
     
@@ -204,7 +204,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setCurrentUsername($username){
+    public function setCurrentUsername($username) {
         $this->_currentUsername = (string) $username;
     }
     
@@ -217,7 +217,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getCurrentUsername(){
+    public function getCurrentUsername() {
         return $this->_currentUsername;
     }
     
@@ -230,7 +230,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setCurrentPassword($password){
+    public function setCurrentPassword($password) {
         $this->_currentPassword = $password;
     }
     
@@ -243,7 +243,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getCurrentPassword(){
+    public function getCurrentPassword() {
         return $this->_currentPassword;
     }
 }
