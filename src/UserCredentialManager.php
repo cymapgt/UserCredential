@@ -5,11 +5,11 @@ use cymapgt\Exception\UserCredentialException;
 
 /**
  * UserCredentialManager
- * Manage the authentication process
+ * Manage the authentication  and password policy process
  *
  * @category    
  * @package     cymapgt.core.application.authentication.UserCredential
- * @copyright   Copyright (c) 2014 Cymap
+ * @copyright   Copyright (c) 2015 Cymap
  * @author      Cyril Ogana <cogana@gmail.com>
  * @abstract
  * 
@@ -23,9 +23,6 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
         parent::__construct($userProfile);
     }
     
-    /**
-     * getBaseEntropy
-     */
     public function getBaseEntropy() {
         return parent::_getBaseEntropy();
     }
@@ -76,6 +73,10 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
     
     public function validateLength() {
         return parent::_validateLength();
+    }
+     
+    public function validateConsecutiveCharacterRepeat() {
+        return parent::_validateConsecutiveCharacterRepeat();
     }
     
     public function validatePolicy() {

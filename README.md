@@ -1,5 +1,5 @@
 # PHP USERCREDENTIALS
-This package can implement password authentication policies. It can perform several types of check to evaluate if user passwords and authentication procedures comply with security recommendations
+This package can implement password authentication and policy management. It can perform several types of check to evaluate if user passwords and authentication procedures comply with security recommendations
 
 ##Description
 The PHP UserCredential is a pluggable service that enables one to validate 
@@ -17,17 +17,16 @@ libraries, particularly for Multi Factor Authentication methods.
 ## Usage
 ### Overview
 This package is intended for PHP applications which use Password for authentication and are
-required to maintain a User Credential policy of sorts. We will also plug in Multi Factor authentication
-capability in coming version to support applications with such need, starting with the MultiOTP Library.
+required to maintain a User Credential policy of sorts. We also offer a Multi Factor authentication package which utilizes the MultiOTP Library.
 
 The objectives of the Package are 
 
 * Implement policy for password encryption and verification (At the moment being PHP's bcrypt library)
 * Implement policy for authentication and password management by implementing authentication guidlines in 
-  OWASP Secure Coding Practices (https://www.owasp.org/index.php/OWASP_Secure_Coding_Practices_-_Quick_Reference_Guide)
+  OWASP Secure Coding Practices ([https://www.owasp.org/index.php/OWASP_Secure_Coding_Practices_-_Quick_Reference_Guide](https://www.owasp.org/index.php/OWASP_Secure_Coding_Practices_-_Quick_Reference_Guide)
 * Provide an easy way to integrate password policy to your application. When you use the service out of the box
    without custom configuration, it provides the following
- - Temporary lock out account after 4 successive illegal login attempts for 10 minute
+ - **(Version 1.2)** Temporary lock out account after 4 successive illegal login attempts for 10 minute
  - Indefinately lock out account on 5th successive illegal login attempt
  - User cannot repeat 5 last passwords
  - User passwords expire after 45 days
@@ -35,6 +34,8 @@ The objectives of the Package are
  - Minimum password length required of 8 characters
  - Minimum password entropy is 2 capital case alphabet characters, 2 lower case alphabet characters, 1 numeric character and 1 special character
  - User cannot use their Username, or their real name (or part of) in the Password string
+ - **(Version 1.3)** Password cannot contain more than 2 consecutive characters (e.g. *aaa*)
+ - Password strength checker Class is included (Kudos to Ryan Chouinard for development of the lovely Phpass package (**rchouinard/phpass**) [https://github.com/rchouinard/phpass](https://github.com/rchouinard/phpass)), which we Forked for the strength functionality checker using NIST and Wolfram algorithms
 * Provide a consistent interface for authentication and policy processes regardless of the backend used
 
 ###Implementation of OWASP Guidlines
@@ -46,7 +47,7 @@ The objectives of the Package are
  * **Enforce the changing of temporary passwords on the next use:** The service will recommend/enforce password change on next attempted login when using a weak password
  * **Prevent password re-use:** The service can support this. By default the last 5 passwords are not allowed to be repeated. User defined policy can increase this. We have seen up to 12 previous passwords being used in some environments.
  * **Enforce password changes based on requirements established in policy or regulation. Critical systems may require more frequent changes. The time between resets must be administratively controlled:** The service has a default expiry period for passwords of 45 days. A stronger User Defined Policy (e.g. 30 days) can be set using the User defined policy methods.
- * **Use MultiFactor Authentication for highly sensitive or high value transactional accounts The service implements an Interface that can allow for Multi-Factor authentication. We are currently integrating 2 factor authentication using MultiOTP library.
+ * **Use MultiFactor Authentication for highly sensitive or high value transactional accounts** The service implements an Interface that can allow for Multi-Factor authentication. 
 
 ###Using the Package
 ####Named Constants
@@ -70,6 +71,10 @@ The objectives of the Package are
     const USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD    = 6;
     const USERCREDENTIAL_ACCOUNTPOLICY_NAMEINPASSWD  = 7;
 
+    //Password strength constants
+    const PHPASS_PASSWORDSTRENGTHADAPTER_NIST = 0;
+    const PHPASS_PASSWORDSTRENGTHADAPTER_WOLFRAM = 1;
+
 #### Building Your User's Profile
  * This service is decoupled from backend store of user and auth info. It will need an array of the userProfile,
    which you should build and provide to the Service.
@@ -80,7 +85,7 @@ The objectives of the Package are
         "password" => "m&$1eLe6Ke()", //Password provided by user when loggin in, else null if youre running this in session and not log in
         "fullname" => "James Rodriguez",
         "passhash" => "bcrypt",
-        "passhist" => array( //These should be already stored as encrypted in your backend store :)
+        "passhist" => array( //These should be already stored as encrypted in your backend store and would be of required entropy :)
             \password_hash('abc', \PASSWORD_DEFAULT),
             \password_hash('def', \PASSWORD_DEFAULT),
             \password_hash('ghi', \PASSWORD_DEFAULT),
@@ -100,14 +105,14 @@ The objectives of the Package are
     );
 
 #### Checking User Credentials During Login
+    use cymapgt\core\application\authentication\UserCredential;
     //Build user Profile First (see sample above)
-
-    //Note below the main methods are validateEntropy()and validatePolicy()
 
     $userCredentialService = new UserCredentialManager($userProfile);
 
     try {
-        $usercredentialService->validateEntropy($userProfile);
+        $usercredentialService->validateEntropy();
+        $usercredentialService->validateLength();     $usercredentialService->validateConsecutiveCharacterRepeat();
         $checkPolicy = true;
     } catch (UserCredentialException $enException) {
         $enExceptionId = $enException->getCode();
@@ -117,7 +122,7 @@ The objectives of the Package are
 
     if ($checkPolicy) {
         try {
-            $usercredentialService->validatePolicy($userProfile);
+            $usercredentialService->validatePolicy();
         } catch (UserCredentialException $plcyException) {
             //Handle the Exception...
         }
@@ -127,8 +132,17 @@ The objectives of the Package are
 
 
 ####Usage During Sessions
- * Usage during sessions is as above, except you cannot use validateEntropy() only validatePolicy() e.g on accessing a resource it may calculate
+ * Usage during sessions is as above, except you cannot use validateEntropy() etc .... only validatePolicy() e.g on accessing a resource it may calculate
 that the 45 days have elapsed and throw exception requiring password change
+
+#### Verifying Password Strength with Phpass
+The strength checker method is static, to allow for usage without needing instantiation of the UserCredentialManager class. Thus, it can also be used in assisting users when they are changing passwords or setting up new passwords.
+        use cymapgt\core\application\authentication\UserCredential; 
+        
+    $passwordStrength = UserCredentialManager::passwordStrength($passwordString);
+ 
+    //do something like show strength bar, or enforce stronger password
+
 
 ### Testing
 PHPUnit Tests are provided with the package
