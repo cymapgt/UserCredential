@@ -2,7 +2,6 @@
 namespace cymapgt\core\application\authentication\UserCredential\services;
 
 use cymapgt\Exception\UserCredentialException;
-use cymapgt\core\application\authentication\UserCredential\abstractclass\UserCredentialAuthenticationInterface;
 
 /**
  * UserCredentialSmsTotpLoginService
@@ -19,7 +18,7 @@ use cymapgt\core\application\authentication\UserCredential\abstractclass\UserCre
  *  - Implement phase 1 of login using Password Login Service
  *  - Implement phase 2 of login using TOTP SMS Service by sending tokens
  */
-class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginService implements UserCredentialAuthenticationInterface
+class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginService
 {
     protected $userTotpProfile = array();    //the totp profile for the user
     protected $keyLength = null;    //key length to use for generating the one time enc key
