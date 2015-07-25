@@ -20,7 +20,7 @@ use cymapgt\Exception\UserCredentialException;
 interface UserCredentialAuthenticationInterface
 {
     /**
-     * function setUsePassword() - Specify whether the method uses password
+     * Specify whether the method uses password
      *                              (set e.g. user log in, lDAP, 2 FACTOR (step 1)
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      *
@@ -42,7 +42,7 @@ interface UserCredentialAuthenticationInterface
     public function getUsePassword();
     
     /**
-     * function setPassword() - Set the user password, and hash it
+     * Set the user password, and hash it
      *
      * Cyril Ogana <cogana@gmail.com>- 2014-02-13
      *
@@ -53,7 +53,7 @@ interface UserCredentialAuthenticationInterface
     public function setPassword($password);
     
     /**
-     * function getPassword()  - Return the hashed user password
+     * Return the hashed user password
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -66,7 +66,7 @@ interface UserCredentialAuthenticationInterface
     public function getPassword($unhashed = false);
     
     /**
-     * function setMultiFactor($flag) - Set whether this service uses multi factor auth
+     * Set whether this service uses multi factor auth
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -77,10 +77,9 @@ interface UserCredentialAuthenticationInterface
     public function setMultiFactor($flag);
     
     /**
-     * function setMultiFactorHandler - Provide namespace of the multi factor handler service,
-     *                                  which has to implement the interface
-     *                                  cymapgt\core\application\authentication\abstractclass\UserCredentialAuthenticationMultiFactorInterface
-     *
+     * Provide namespace of the multi factor handler service,which has to implement the interface
+     * cymapgt\core\application\authentication\abstractclass\UserCredentialAuthenticationMultiFactorInterface
+     *                                  
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
      * @param string $handler - The namespace of the multi factor handler service
@@ -90,9 +89,8 @@ interface UserCredentialAuthenticationInterface
     public function setMultiFactorHandler($handler);
     
     /**
-     * function getMultiFactorHandler - Return an instance of the multi factor handler service
-     *                                  to use ofr this authentication session
-     * 
+     * Return an instance of the multi factor handler service to use ofr this authentication session
+     *                                  
      * Cyril Ogana <cogana@gmail.com > - 2014-02-13
      * 
      * @return object
@@ -102,8 +100,8 @@ interface UserCredentialAuthenticationInterface
     public function getMultiFactorHandler();
     
     /**
-     * function setMultiFactorStages - in an array, configure the steps of the multifactor login, passing
-     *                                 numeric stage names, types and handler calls
+     * In an array, configure the steps of the multifactor login, passing numeric stage names, types and handler calls
+     *                                 
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -114,7 +112,7 @@ interface UserCredentialAuthenticationInterface
     public function setMultiFactorStages(Array $stages);
     
     /**
-     * function getMultiFactorStages - return the multi factor stages array
+     *  return the multi factor stages array
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -125,7 +123,7 @@ interface UserCredentialAuthenticationInterface
     public function getMultiFactorStages();
     
     /**
-     * function initialize() - initialize the service, bootstrap before any processing
+     * initialize the service, bootstrap before any processing
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -134,7 +132,7 @@ interface UserCredentialAuthenticationInterface
     public function initialize();
     
     /**
-     * function authenticate() - authenticate the user after initialization
+     * authenticate the user after initialization
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -143,7 +141,7 @@ interface UserCredentialAuthenticationInterface
     public function authenticate();
     
     /**
-     * function setCurrentUsername($username) - set the current username
+     * set the current username
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
@@ -154,7 +152,7 @@ interface UserCredentialAuthenticationInterface
     public function setCurrentUsername($username);
     
     /**
-     * function getCurrentUsername() - get the current username
+     * get the current username
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
@@ -165,7 +163,7 @@ interface UserCredentialAuthenticationInterface
     public function getCurrentUsername();
     
     /**
-     * function setCurrentPassword() - set the current password
+     * set the current password
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
@@ -176,7 +174,7 @@ interface UserCredentialAuthenticationInterface
     public function setCurrentPassword($password);
     
     /**
-     * function getCurrentPassword() - return the current password (hashed)
+     * return the current password (hashed)
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
