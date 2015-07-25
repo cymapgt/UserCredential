@@ -5,13 +5,15 @@ use cymapgt\Exception\UserCredentialException;
 use Phpass\Strength;
 
 /**
- * This package implements user password policy and credential management
+ * This package implements user password policy and credential management as well as
+ * 2 factor authentication using TOTP
  *
  * @category    security
  * @package     cymapgt.core.application.authentication.UserCredential
  * @copyright   Copyright (c) 2015 Cymap
  * @author      Cyril Ogana <cogana@gmail.com>
  * @abstract
+ * Exception@1025
  * 
  *      - See http://www.owasp.org/images/0/08/OWASP_SCP_Quick_Reference_Guide_v2.pdf 
  *           (authentication section)
@@ -63,7 +65,7 @@ abstract class UserCredentialAbstract
     * @access private
     */
     private function _initializeProfile($userProfile) {
-        //validate that user profile has the correct information
+        //validate that user profile has the correct information for password validation
         if (!is_array($userProfile)
             || !isset($userProfile['username'])
             || !isset($userProfile['password'])
@@ -78,6 +80,12 @@ abstract class UserCredentialAbstract
         ) {
             throw new UserCredentialException('The user profile is not properly initialized', 1000);
         }
+        
+        //set a blank TOTP profile if not set
+        if (!isset($userProfile['totpinfo'])) {
+            $userProfile['totpinfo'] = array();
+        }
+        
         $this->_userProfile = $userProfile;
     }
 
@@ -112,6 +120,10 @@ abstract class UserCredentialAbstract
             'toggle'  => true,
             'min_len' => 1
         );
+        
+        $this->_baseEntropySetting['multi_factor_on'] = false; //whether multi-factor auth is on or off
+        $this->_baseEntropySetting['multi_factor_enc_key_length'] = 20; //length of encryption key generated when verifying token
+                
         $this->_baseEntropyOverride = false;    //override the reommended settings?
         $this->_setUdfEntropy($this->_baseEntropySetting);
     }
@@ -254,9 +266,27 @@ abstract class UserCredentialAbstract
             || !isset($entropyObj['special']['min_len'])
             || !is_int($entropyObj['special']['min_len'])
         ) {
-            throw new UserCredentialException('the uppercase settings must be an array containing toggle and min upper length', 1007);
+            throw new UserCredentialException('the special character settings must be an array containing toggle and min length', 1007);
         }
         $this->_udfEntropySetting['special'] = $entropyObj['special'];
+        
+        //in case we are using multi-factor, validate that all options are set
+        if (
+            isset($entropyObj['multi_factor_on'])
+            && $entropyObj['multi_factor_on'] === true
+        ) {
+            //encryption key length
+            if (
+                !isset($entropyObj['multi_factor_enc_key_length'])
+                || !(is_int($entropyObj['multi_factor_enc_key_length']))
+                || !($entropyObj['multi_factor_enc_key_length'] >= 16)
+            ) {
+                throw new UserCredentialException('Multi factor auth is flagged on, but the encryption key length is not properly initialized!', 1023);
+            }
+
+            $this->_udfEntropySetting['multi_factor_on'] = $entropyObj['multi_factor_on'];
+            $this->_udfEntropySetting['multi_factor_enc_key_length'] = $entropyObj['multi_factor_enc_key_length'];
+        }
     }
     
     /**
@@ -569,7 +599,7 @@ abstract class UserCredentialAbstract
     /**
      * validate the entropy of the password in the userprofile
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -662,9 +692,44 @@ abstract class UserCredentialAbstract
     }
     
     /**
+     * Validate entropy of TOTP parameters in the profile
+     * Cyril Ogana <cogana@gmail.com>
+     * 2015-07-24
+     * 
+     * @return bool
+     * 
+     * @access protected
+     * @final
+     */
+    final protected function _validateEntropyTotp() {
+        //in case we are using multi-factor, validate that all options are set
+        if (
+            isset($this->_udfEntropySetting['multi_factor_on'])
+            && $this->_udfEntropySetting['multi_factor_on'] === true
+        ) {
+            //encryption key length
+            if (
+                !(count($this->_userProfile['totpinfo']))
+                || !(isset($this->_userProfile['totpinfo']['enc_key']))
+            ) {
+                throw new UserCredentialException('TOTP info is not set in the users profile', 1024);
+            }
+            
+            //validate length of encryption key
+            $encKeyLength = $this->_udfEntropySetting['multi_factor_enc_key_length'];
+            
+            if (!strlen($this->_userProfile['totpinfo']['enc_key']) >= $encKeyLength) {
+                throw new UserCredentialException('The encryption key string length for TOTP hashing is too short', 1025);
+            }
+        }
+        
+        return true;
+    }
+    
+    /**
      * validate the password length of the users credentials
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -697,7 +762,7 @@ abstract class UserCredentialAbstract
      * in the users password string
      * 
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -746,7 +811,7 @@ abstract class UserCredentialAbstract
      * validate the password policy during authentication
      * 
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -793,7 +858,7 @@ abstract class UserCredentialAbstract
      * validate the password policy during process of making a password change
      * 
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -832,7 +897,7 @@ abstract class UserCredentialAbstract
      * only once in 24 hours
      * 
      * Cyril Ogana <cogana@gmail.com>
-     * 2018-07-18
+     * 2015-07-18
      *
      * @return bool
      *
@@ -864,7 +929,8 @@ abstract class UserCredentialAbstract
      * Check password strength using NIST Or Wolfram adapter (default NIST)
      * See https://github.com/rchouinard/phpass
      * Many thanks to Ryan Chouinard for the phpass package
-     * 
+     * Cyril Ogana <cogana@gmail.com>
+     * 2015-07-18
      * @param string $passwordString - The password string to evaluate
      * @param int $strengthAdapter - Named constant representing adapter to use (default NIST)
      * 
@@ -885,6 +951,47 @@ abstract class UserCredentialAbstract
         $phpassStrength = new Strength($strengthAdapter);
         return $phpassStrength->calculate($passwordString);
     }
+  
+    /**
+     * Return a cyprographically strong random string of required length
+     * Cyril Ogana <cogana@gmail.com>
+     * 2015-07-24
+     * 
+     * @return string
+     * 
+     * @access public
+     * @static
+     */
+    public static function generateRandomKey($keyLength = null) {
+        if (
+            !(is_int($keyLength))
+            && !($keyLength > 0)
+        ) {
+            throw new UserCredentialException('Key length for random key must be a positive integer');
+        }
+            
+        return openssl_random_pseudo_bytes($keyLength);
+    }
+    
+    /**
+     * Generate a 6 digit SMS token
+     * Cyril Ogana <cogana@gmail.com>
+     * 2015-07-24
+     * 
+     * @return string
+     * 
+     * @param string $userName - The username
+     * @param string $keyString - String to use as a salt
+     * 
+     * @access public
+     * @static
+     */
+    public static function generateToken($userName, $keyString) {
+        $userNameCast = (string) $userName;
+        $keyStringCast = (string) $keyString;
+        $multiOtpObj = new MultiotpWrapper($keyStringCast);
+        return $multiOtpObj->GenerateSmsToken($userNameCast);
+    }
     
     /**
         * Abstract methods for concrete implementation
@@ -901,6 +1008,7 @@ abstract class UserCredentialAbstract
     abstract public function setUdfEntropy($entropyObj);
     abstract public function setUdfPasswordPolicy($entropyObj);
     abstract public function validateEntropy();
+    abstract public function validateEntropyTotp();
     abstract public function validateLength();
     abstract public function validateConsecutiveCharacterRepeat();
     abstract public function validatePolicy();

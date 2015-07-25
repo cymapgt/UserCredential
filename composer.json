@@ -4,7 +4,8 @@
     ],
     "autoload" : {        
         "files" : [
-            "src/config/NamedConstant.php"
+            "src/config/NamedConstant.php",
+            "lib/Multiotp/multiotp.class.php"
         ],
         "psr-4" : {
             "cymapgt\\Exception\\" : "src/Exception",

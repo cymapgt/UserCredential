@@ -71,6 +71,10 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
         return parent::_validateEntropy();
     }
     
+    public function validateEntropyTotp() {
+        return parent::_validateEntropyTotp();
+    }
+    
     public function validateLength() {
         return parent::_validateLength();
     }
