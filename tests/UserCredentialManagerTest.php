@@ -37,6 +37,9 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
                               'password_last_changed_datetime' => new \DateTime('2014-05-04'),
                               'last_login_attempt_datetime' => new \DateTime('2014-05-16 23:45:10')
                           ),
+                          "totpinfo"=>array(
+                              'enc_key' => 'iamanenkkeyandiamoftherequiredlength:)'
+                          ),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile);
     }
@@ -56,7 +59,7 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     {
         $baseEntropy = $this->object->getBaseEntropy();
         $this->assertInternalType('array', $baseEntropy);
-        $this->assertEquals(6, count($baseEntropy));
+        $this->assertEquals(8, count($baseEntropy));
         $this->assertEquals('min_pass_len', key($baseEntropy));
         next($baseEntropy);
         $this->assertEquals('max_consecutive_chars', key($baseEntropy));
@@ -68,6 +71,10 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('lowercase', key($baseEntropy));
         next($baseEntropy);        
         $this->assertEquals('special', key($baseEntropy));
+        next($baseEntropy);
+        $this->assertEquals('multi_factor_on', key($baseEntropy));
+        next($baseEntropy);
+        $this->assertEquals('multi_factor_enc_key_length', key($baseEntropy));
     }
 
     /**
@@ -357,5 +364,100 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $passwordString = 'MySecretPassword';
         $this->assertEquals(30, UserCredentialManager::passwordStrength($passwordString));
         $this->assertEquals(59, UserCredentialManager::passwordStrength($passwordString, \PHPASS_PASSWORDSTRENGTHADAPTER_WOLFRAM));
+    }
+    
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential::__construct
+     */
+    public function testSetMultiFactorKeyLengthExceptionIfOn() {
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException', 'Multi factor auth is flagged on, but the encryption key length is not properly initialized!');
+
+        $entropyObj = Array
+        (
+            'min_pass_len' => 8,
+            'max_consecutive_chars' => 2,
+            'uppercase' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 2
+                ),
+            'numeric' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 1
+                ),
+            'lowercase' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 2
+                ),
+
+            'special' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 1
+                ),
+
+            'multi_factor_on' => true,
+            'multi_factor_enc_key_length' => 15
+        );        
+        
+        $this->object->setUdfEntropy($entropyObj);
+    }
+    
+    /**
+     * @covers  cymapgt\core\application\authentication\UserCredential::generateRandomKey
+     */
+    public function testGenerateRandomKey() {
+        $this->assertEquals(16, strlen(UserCredentialManager::generateRandomKey(16)));
+       
+        $keyLength = 24;
+        
+        $entropyObj = Array
+        (
+            'min_pass_len' => 8,
+            'max_consecutive_chars' => 2,
+            'uppercase' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 2
+                ),
+            'numeric' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 1
+                ),
+            'lowercase' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 2
+                ),
+
+            'special' => Array
+                (
+                    'toggle' => true,
+                    'min_len' => 1
+                ),
+
+            'multi_factor_on' => true,
+            'multi_factor_enc_key_length' => $keyLength
+        );         
+        
+        $this->assertEquals($keyLength, strlen(UserCredentialManager::generateRandomKey($keyLength)));        
+    }
+    
+    /**
+     * @covers  cymapgt\core\application\authentication\UserCredential::validateEntropyTotp
+     */
+    public function testValidateEntropyTotp() {
+        $this->assertInternalType('bool', $this->object->validateEntropyTotp());        
+        $this->assertEquals(true, $this->object->validateEntropyTotp());
+    }
+    
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredeintial::generateToken
+     */
+    public function testGenerateToken() {
+        $this->assertEquals(6, strlen(UserCredentialManager::generateToken('rhossis', 'iAmAsTrInGeNcRyPtIoNkEyYo!:)')));
     }
 }

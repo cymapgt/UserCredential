@@ -23,17 +23,17 @@ use cymapgt\core\application\authentication\UserCredential\abstractclass\UserCre
 class UserCredentialPasswordLoginService implements UserCredentialAuthenticationInterface
 {
     //flags
-    private $_usePasswordFlag = true;  //whether the auth is password based (at some stage or fully)
-    private $_multiFactorFlag = false; //whether the auth service is multi factor
+    protected $_usePasswordFlag = true;  //whether the auth is password based (at some stage or fully)
+    protected $_multiFactorFlag = false; //whether the auth service is multi factor
     
     //user info
-    private $_inputPassword   = ''; //the input password
-    private $_currentUsername = ''; //username
-    private $_currentPassword = ''; //hashed password
+    protected $_inputPassword   = ''; //the input password
+    protected $_currentUsername = ''; //username
+    protected $_currentPassword = ''; //hashed password
     
     //multi factor auth
-    private $_multiFactorHandler = null;    //the handler instance for mutli factor auth
-    private $_multiFactorStages  = array(); //the stages of multi factor auth
+    protected $_multiFactorHandler = null;    //the handler instance for mutli factor auth (if delegated)
+    protected $_multiFactorStages  = array(); //the stages of multi factor auth (if to be delegated)
     
     //Constructor method
     public function __construct() {
@@ -51,7 +51,6 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      */             
     public function setUsePassword($flag) {
         $this->_userPasswordFlag = (bool) $flag;
-        $this->_multiFactorFlag  = true;
     }
 
     /**
@@ -192,7 +191,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * @access public
      */
     public function authenticate() {
-        return password_verify($this->_inputPassword, $this->_currentPassword);
+        return \password_verify($this->_inputPassword, $this->_currentPassword);
     }
     
     /**
