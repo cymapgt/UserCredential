@@ -1,0 +1,23 @@
+multiotp-database-format-v3
+algorithm=hotp
+attributed_users=test_user
+delta_time=0
+description=multiOTP test_token
+error_counter=0
+format=DECIMAL
+issuer=multiOTP
+key_algorithm=hotp
+last_error=0
+last_event=-1
+last_login=0
+last_update=1437697836
+locked=0
+manufacturer=multiOTP
+number_of_digits=6
+otp=TRUE
+time_interval=0
+token_algo_suite=HMAC-SHA1
+token_id=
+token_seed=3132333435363738393031323334353637383930
+token_serial=test_token
+encryption_hash=99CCFC0D033729754B6BB4832FE786A1
