@@ -294,7 +294,43 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $this->object = new UserCredentialManager($userProfile);
         $this->object->validateEntropy();
     }
-    
+
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
+     */
+    public function testValidateEntropyPasswordContainsReverseUsernameException() {
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException','Password cannot contain username or any of your names');
+        $userProfile = array("username"=>"c.ogana",
+                          "password"=>"1LiryC!",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(
+                          ), //in reality, these are bcrypt hashes
+                          "policyinfo"=>array(
+                              'failed_attempt_count' => 0,
+                              'password_last_changed_datetime' => new \DateTime('2015-05-01'),
+                              'last_login_attempt_datetime' => new \DateTime('2015-03-01 23:45:10')
+                          ),
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfile);
+        $this->object->validateEntropy();
+        
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException','Password cannot contain username or any of your names');
+        $userProfile1 = array("username"=>"c.ogana",
+                          "password"=>"anago.c",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(
+                          ), //in reality, these are bcrypt hashes
+                          "policyinfo"=>array (
+                              'failed_attempt_count' => 0,
+                              'password_last_changed_datetime' => new \DateTime('2015-05-01'),
+                              'last_login_attempt_datetime' => new \DateTime('2015-03-01 23:45:10')
+                          ),
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfile1);
+        $this->object->validateEntropy();        
+    }    
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicyAtChange
