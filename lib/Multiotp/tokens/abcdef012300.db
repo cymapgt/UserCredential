@@ -1,0 +1,23 @@
+multiotp-database-format-v3
+algorithm=hotp
+attributed_users=
+delta_time=0
+description=multiOTP demo ABCDEF012300
+error_counter=0
+format=
+issuer=multiOTP
+key_algorithm=
+last_error=0
+last_event=-1
+last_login=0
+last_update=1437697837
+locked=0
+manufacturer=multiOTP demo
+number_of_digits=6
+otp=
+time_interval=0
+token_algo_suite=
+token_id=
+token_seed=3132333435363738393031323334353637383930
+token_serial=abcdef012300
+encryption_hash=99CCFC0D033729754B6BB4832FE786A1

@@ -616,11 +616,14 @@ abstract class UserCredentialAbstract
             throw new Exception('The username and password are not set', 1014);
         }
 
-        //validate that user is not using part of username as password
+        //validate that user is not using part of username as password (or reverse of it either)
         $namePartsArr = array();
         $namePartsArr[] = strtolower($this->_userProfile['username']);
+        $namePartsArr[] = strrev(strtolower($this->_userProfile['username']));
         $namePartsArr[] = strtolower($this->_userProfile['fullname']);
+        $namePartsArr[] = strrev(strtolower($this->_userProfile['fullname']));
         $namePartsArr[] = strtolower(str_replace(' ', '', $this->_userProfile['fullname']));
+        $namePartsArr[] = strrev(strtolower(str_replace(' ', '', $this->_userProfile['fullname'])));
         
         $fullNameExploded = explode(' ', $this->_userProfile['fullname']);
         
@@ -628,12 +631,18 @@ abstract class UserCredentialAbstract
             $namePartsArr[] = strtolower($nameItem);
         }
         
+        $fullNameExplodedRev = explode(' ', strrev($this->_userProfile['fullname']));
+        
+        foreach ($fullNameExplodedRev as $nameItemRev) {
+            $namePartsArr[] = strtolower($nameItemRev);
+        }
+        
         //iterate and search for occurrences of name parts
         foreach ($namePartsArr as $namePart) {
             $namePartCast = (string) $namePart;
             
             if ((strpos(strtolower($this->_userProfile['password']), $namePartCast)) !== false) {
-                throw new UserCredentialException('Password cannot contain username or any of your names', \USERCREDENTIAL_ACCOUNTPOLICY_NAMEINPASSWD);
+                throw new UserCredentialException('Password cannot contain username or any of your names (or reverse of either)', \USERCREDENTIAL_ACCOUNTPOLICY_NAMEINPASSWD);
             }
         }
         //set which entropy to use (base or udf)

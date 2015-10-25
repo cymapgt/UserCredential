@@ -1,0 +1,23 @@
+multiotp-database-format-v3
+algorithm=hotp
+attributed_users=
+delta_time=0
+description=Manufacturer ZZ7000000001
+error_counter=0
+format=DECIMAL
+issuer=Issuer0
+key_algorithm=urn:ietf:params:xml:ns:keyprov:pskc:hotp
+last_error=0
+last_event=1216384469
+last_login=0
+last_update=1437697837
+locked=0
+manufacturer=Manufacturer
+number_of_digits=8
+otp=TRUE
+time_interval=30
+token_algo_suite=HMAC-SHA256
+token_id=
+token_seed=91f0dc4e239977e6bcc273e4f5414a8a6cf6d62c6990f58b4914a2d588b3475f
+token_serial=zz7000000001
+encryption_hash=99CCFC0D033729754B6BB4832FE786A1
