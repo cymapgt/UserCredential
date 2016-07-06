@@ -5,7 +5,7 @@ use cymapgt\Exception\UserCredentialException;
 
 /**
  * UserCredentialManager
- * Manage the authentication  and password policy process
+ * Concrete class to Manage the user and password policy process
  *
  * @category    
  * @package     cymapgt.core.application.authentication.UserCredential

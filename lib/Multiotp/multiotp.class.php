@@ -5341,7 +5341,7 @@ class Multiotp
             $q_counter      = $this->GetTokenLastEvent() + 1;
             $q_display_name = (('' != $display_name)?$display_name:$the_token);
             $q_issuer       = $this->GetTokenIssuer();
-
+            
             switch (strtolower($q_algorithm))
             {
                 case 'totp':
@@ -7959,8 +7959,7 @@ class Multiotp
             
             return $this->WriteTokenData();
         }
-    }    
-
+    }   
 
     function SetTokenSerialNumberLength($value)
     {
