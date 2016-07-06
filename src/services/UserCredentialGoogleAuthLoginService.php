@@ -2,39 +2,40 @@
 namespace cymapgt\core\application\authentication\UserCredential\services;
 
 use cymapgt\Exception\UserCredentialException;
+use cymapgt\core\application\authentication\UserCredential\abstractclass\MultiotpWrapper;
 
 /**
- * UserCredentialSmsTotpLoginService
+ * UserCredentialGoogleAuthLoginService
  * This service implements 2 factor authentication, with the first stage beign Password
- * and second stage being SMS based TOTP authentication
+ * and second stage being Google Authenticator based TOTP authentication
+ * https://github.com/google/google-authenticator
  *
  * @category    
  * @package     cymapgt.core.application.authentication.UserCredential.services
- * @copyright   Copyright (c) 2015 Cymap
+ * @copyright   Copyright (c) 2016 Cymap
  * @author      Cyril Ogana <cogana@gmail.com>
  * @abstract
  * 
  * The objectives of the service are
  *  - Implement phase 1 of login using Password Login Service
- *  - Implement phase 2 of login using TOTP SMS Service by sending tokens
+ *  - Implement phase 2 of login using Google Authentictor TOTP Service
  */
-class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginService
+class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginService
 {
     protected $userTotpProfile = array();    //the totp profile for the user
     protected $keyLength = null;    //key length to use for generating the one time enc key
-    protected $verificationHash = null;    //the hash to verify against
-    protected $currentOneTimeToken = null;   //the onen time token we expect user to put for this session
+    protected $verificationHash = null;    //the hash to verify against    
     protected $oneTimeToken = null;    //the one time token the user inputs for this session
-            
+        
     //Constructor method
     public function __construct() {
         
-    }        
+    }
     
     /**
      * initialize the service, bootstrap before any processing
      * 
-     * Cyril Ogana <cogana@gmail.com> - 2015-07-25
+     * Cyril Ogana <cogana@gmail.com> - 2016-07-06
      * 
      * @access public
      */
@@ -44,7 +45,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
             parent::initialize();
             return;
         }
-                
+
         //verify that multi-factor stages is set
         if (
             !(isset($this->_multiFactorStages))
@@ -86,8 +87,6 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
             || !(is_string($this->verificationHash))
             || !(isset($this->oneTimeToken))
             || !(is_string($this->oneTimeToken))
-            || !(isset($this->currentOneTimeToken))
-            || !(is_string($this->currentOneTimeToken))
         ) {
             throw new UserCredentialException('The user TOTP profile is not initialized properly', 2102);
         }
@@ -96,7 +95,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
     /**
      * authenticate the user after initialization
      * 
-     * Cyril Ogana <cogana@gmail.com> - 2015-07-24
+     * Cyril Ogana <cogana@gmail.com> - 2016-07-05
      * 
      * @access public
      */
@@ -128,9 +127,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
         $encKey = $this->userTotpProfile['enc_key'];
         $verificationHash = $this->getVerificationHash();
         $comparisonHash = \crypt($this->getCurrentPassword(), $encKey);
-        $currentOneTimeToken = $this->getCurrentOneTimeToken();
-        $oneTimeToken = $this->oneTimeToken;
-        
+
         //initialize verification - comparison
         $verificationEqualsComparison = false;
         
@@ -148,7 +145,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
         if (
             !($totpTimeElapsed < $totpTimelimit)
             || !($verificationEqualsComparison === true)
-            || !(\password_verify($oneTimeToken,$currentOneTimeToken))
+            || !($this->checkToken())
         ) {
             return false;
         } else {
@@ -156,23 +153,6 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
         }
     }
     
-    /**
-     *  Return the hashed user password
-     * 
-     * Cyril Ogana <cogana@gmail.com> - 2014-02-13
-     * 
-     * @param  $unhashed - flag if true, return unhashed
-     * 
-     * @return mixed - the hashed password
-     * 
-     * @access public
-     */
-    public function getPassword($unhashed = false) {
-        //unhashed has no bearing, we want it false
-        $unhashedForce = false;
-        return parent::getPassword($unhashedForce);
-    }
-
     /**
      *  Set the TOTP profile of the user
      * 
@@ -233,6 +213,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
         return $this->keyLength;
     }
     
+    
     /**
      *  Set the verification hash for Stage 2 authentication
      * 
@@ -259,36 +240,11 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
     }
 
     /**
-     *  Set the current one time password
-     * 
-     * Cyril Ogana <cogana@gmail.com> - 2015-07-24
-     * 
-     * @param  string $verificationToken - SMS token for the one time login (bcrypt hashed)
-     * 
-     * @access public
-     */     
-    public function setCurrentOneTimeToken($verificationToken) {
-        $this->currentOneTimeToken = (string) $verificationToken;
-    }
-    
-    /**
-     *  Return the current one time token
-     * 
-     * Cyril Ogana <cogana@gmail.com> - 2015-07-24
-     * 
-     * @return mixed - the hashed password
-     * @access public
-     */    
-    public function getCurrentOneTimeToken() {
-        return $this->currentOneTimeToken;
-    }
-    
-    /**
      *  Set the verification token expected from user
      * 
      * Cyril Ogana <cogana@gmail.com> - 2015-07-24
      * 
-     * @param  string $verificationToken - SMS token for the one time login (bcrypt hashed)
+     * @param  string $verificationToken - SMS token for the one time login
      * 
      * @access public
      */     
@@ -301,16 +257,53 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * Cyril Ogana <cogana@gmail.com> - 2015-07-24
      * 
-     * @param  $unhashed - flag if true, return unhashed
-     * 
      * @return mixed - the hashed password
      * @access public
      */    
-    public function getOneTimeToken($unhashed = false) {
-        if ((bool) $unhashed === true) {
-            return $this->oneTimeToken;
+    public function getOneTimeToken() {
+        return $this->oneTimeToken;
+    } 
+    
+    /**
+     * Verify a user token if it exists as part of the multi factor login process
+     * 
+     * Cyril Ogana <cogana@gmail.com> - 2016-07-05
+     *
+     * @return boolean
+     * @throws UserCredentialException
+     */
+    protected function checkToken() {
+        //instantiate MultiOtp Wrapper
+        $multiOtpWrapper = new MultiotpWrapper();
+        
+        //get the username
+        $currentUserName = $this->getCurrentUsername();
+        
+        //assert that username is set
+        if (!(\strlen((string) $currentUserName))) {
+            throw new UserCredentialException('Cannot validate a TOTP token when username is not set!');
+        }
+        
+        //assert that the token exists
+        $tokenExists = $multiOtpWrapper->CheckTokenExists($currentUserName);
+        
+        if (!($tokenExists)) {
+            throw new UserCredentialException('The TOTP token for the current user does not exist');
+        }
+
+        //username mapped to their token name
+        $multiOtpWrapper->setToken($currentUserName);
+        
+        //validate the Token
+        $oneTimeToken = $this->getOneTimeToken();
+        $tokenCheckResult = $multiOtpWrapper->CheckToken($oneTimeToken);
+        
+        //The results are reversed
+        //TODO: Add intepretation of MultiOtp return results here to enable exception handling
+        if ($tokenCheckResult == 0) {
+            return true;
         } else {
-            return \password_hash($this->oneTimeToken, \PASSWORD_DEFAULT);
+            return false;
         }
     }
 }

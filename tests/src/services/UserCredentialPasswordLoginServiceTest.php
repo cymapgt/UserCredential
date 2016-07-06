@@ -18,7 +18,13 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit_Framework_TestCase
      * This method is called before a test is executed.
      */
     protected function setUp() {
+        //Make sure that UserCredentialPasswordLoginService is available to your auth plugin and create an instance
         $this->object   = new UserCredentialPasswordLoginService;
+        
+        /**
+         * This is the password that is stored in DB hashed with \password_hash function. 
+         * PHP 5.4 will be supported because of ircmaxell/password-compat package
+         */
         $this->password = \password_hash('123456', \PASSWORD_DEFAULT);
     }
 
@@ -34,9 +40,16 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit_Framework_TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialPasswordLoginService::initialize
      */
     public function testInitialize() {
+        //username of authenticating user
         $this->object->setCurrentUserName('rhossis');
+        
+        //password that is stored in the DB
         $this->object->setCurrentPassword($this->password);
+        
+        //password input by the user in the login form / API
         $this->object->setPassword('123456');
+        
+        
         $this->assertEquals(null, $this->object->initialize());
     }
     
@@ -44,6 +57,7 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit_Framework_TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialPasswordLoginService::initialize
      */
     public function testInitializeException() {
+        //if you call initialize without setting the username, password and keyed in password, an exception should be thrown
         $this->setExpectedException('cymapgt\Exception\UserCredentialException', 'The usercredential login service is not initialized with all parameters');
         $this->object->initialize();
     }    
@@ -52,9 +66,12 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit_Framework_TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialPasswordLoginService::authenticate
      */
     public function testAuthenticate() {
+        //test authentication where user has input the correct password
         $this->object->setCurrentUserName('rhossis');
         $this->object->setCurrentPassword($this->password);
         $this->object->setPassword('123456');
+        
+        //test authentication where user has input wrong password. We assume the user input 12345 instead of 123456
         $this->assertEquals(true, $this->object->authenticate());
         $this->object->setPassword('12345');
         $this->assertEquals(false, $this->object->authenticate());
