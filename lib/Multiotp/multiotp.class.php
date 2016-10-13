@@ -1458,7 +1458,6 @@ class Multiotp
                         } elseif (!($rResult = mysql_query($sQuery, $this->_mysql_database_link))) {
                             $this->WriteLog("Error: SQL database query error ($sQuery) : ".mysql_error(), TRUE, FALSE, 199, 'System', '');
                             $result = FALSE;
-                            break;
                         } elseif (0 == mysql_affected_rows($this->_mysql_database_link)) {
                             $this->WriteLog("Error: SQL database entry for ".trim($item." ".$id_value)." cannot be created or changed", FALSE, FALSE, 28, 'System', '');
                             $result = FALSE;

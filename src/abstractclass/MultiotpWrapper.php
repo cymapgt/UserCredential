@@ -28,7 +28,8 @@ class MultiotpWrapper extends \Multiotp
      * @return int
      * @access public
      */
-    public function GenerateSmsToken($userName) {
+    public function GenerateSmsToken($user = '') {
+        $userName = $user;
         $nowEpoch = time();
         $smsNowSteps = $nowEpoch;
         $smsDigits = 6;
@@ -514,7 +515,7 @@ class MultiotpWrapper extends \Multiotp
      * 
      * @return string
      */
-    function GetUserAlgorithm() {
+    function GetUserAlgorithm($user = '') {
         return 'totp';
     }
 }
