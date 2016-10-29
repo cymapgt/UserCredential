@@ -116,7 +116,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
 
             return $this->_multiFactorStages;
         } elseif ($currentStage != 2) {
-            throw new UserCredentialException('The current stage of the multi factor authentic process is in an unknown state', 2103);
+            throw new UserCredentialException('The current stage of the multi factor auth process is in an unknown state', 2101);
         }
         
         //authenticate stage 2
@@ -281,14 +281,14 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
         
         //assert that username is set
         if (!(\strlen((string) $currentUserName))) {
-            throw new UserCredentialException('Cannot validate a TOTP token when username is not set!');
+            throw new UserCredentialException('Cannot validate a TOTP token when username is not set!', 2106);
         }
         
         //assert that the token exists
         $tokenExists = $multiOtpWrapper->CheckTokenExists($currentUserName);
         
         if (!($tokenExists)) {
-            throw new UserCredentialException('The TOTP token for the current user does not exist');
+            throw new UserCredentialException('The TOTP token for the current user does not exist', 2107);
         }
 
         //username mapped to their token name
