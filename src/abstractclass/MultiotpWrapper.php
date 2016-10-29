@@ -69,7 +69,8 @@ class MultiotpWrapper extends \Multiotp
         $resync_enc_pass = FALSE,
         $no_server_check = FALSE,
         $self_register_serial = '',
-        $hardware_tokens_list = ''
+        $hardware_tokens_list = '',
+        $ldap_check_passed = FALSE
     ) {
         $this->SetLastClearOtpValue();
         $calculated_token = '';
@@ -143,7 +144,7 @@ class MultiotpWrapper extends \Multiotp
         
         switch (strtolower($this->GetUserAlgorithm())) {
             case 'motp':
-                if (('' == $input_sync) && (!$resync_enc_pass)) {
+                if (('' == $input_sync) && (!($resync_enc_pass === true))) {
                     $max_steps = 2 * $step_window;
                 } else {
                     $max_steps = 2 * $step_sync_window;
@@ -180,7 +181,7 @@ class MultiotpWrapper extends \Multiotp
                         }
                     }
 
-                    if (('' == $input_sync) && (!$resync_enc_pass)) {
+                    if (('' == $input_sync) && (!($resync_enc_pass === true))) {
                         // With mOTP, the code should not be prefixed, so we accept of course always input without prefix!
                         if (($input_to_check == $code_confirmed) || ($input_to_check == $code_confirmed_without_pin)) {
                             if ($input_to_check == $code_confirmed_without_pin) {
@@ -224,12 +225,12 @@ class MultiotpWrapper extends \Multiotp
                         }
                     } else {
                         $check_step++;
-                        if ($display_status) {
+                        if ($display_status === true) {
                             MultiotpShowStatus($check_step, $max_steps);
                         }
                     }
                 } while (($check_step < $max_steps) && (90 <= $result));
-                if ($display_status) {
+                if ($display_status === true) {
                     echo "\r\n";
                 }
                 if (90 <= $result) {
@@ -239,7 +240,7 @@ class MultiotpWrapper extends \Multiotp
                 }
                 break;
             case 'hotp';
-                if (('' == $input_sync)&& (!$resync_enc_pass)) {
+                if (('' == $input_sync)&& (!($resync_enc_pass === true))) {
                     $max_steps = 2 * $event_window;
                 } else {
                     $max_steps = 2 * $event_sync_window;
@@ -274,7 +275,7 @@ class MultiotpWrapper extends \Multiotp
                         }
                     }
 
-                    if (('' == $input_sync) && (!$resync_enc_pass)) {
+                    if (('' == $input_sync) && (!($resync_enc_pass === true))) {
                         if ($input_to_check == $code_confirmed) {
                             if ($additional_step >= 1) {
                                 $this->SetUserTokenLastLogin($now_epoch);
@@ -316,12 +317,12 @@ class MultiotpWrapper extends \Multiotp
                         }
                     } else {
                         $check_step++;
-                        if ($display_status) {
+                        if ($display_status === true) {
                             MultiotpShowStatus($check_step, $max_steps);
                         }
                     }
                 } while (($check_step < $max_steps) && ((90 <= $result)));
-                if ($display_status) {
+                if ($display_status === true) {
                     echo "\r\n";
                 }
                 if (90 <= $result) {
@@ -375,7 +376,7 @@ class MultiotpWrapper extends \Multiotp
                 }
                 break;
             case 'totp';
-                if (('' == $input_sync) && (!$resync_enc_pass)) {
+                if (('' == $input_sync) && (!($resync_enc_pass === true))) {
                     $max_steps = 2 * $step_window;
                 } else {
                     $max_steps = 2 * $step_sync_window;
@@ -413,7 +414,7 @@ class MultiotpWrapper extends \Multiotp
                         }
                     }
                     
-                    if (('' == $input_sync) && (!$resync_enc_pass)) {
+                    if (('' == $input_sync) && (!($resync_enc_pass === true))) {
                         if ($input_to_check == $code_confirmed) {
                             if (($now_steps+$additional_step+$delta_step) > $last_login_step) {
                                 $this->SetUserTokenLastLogin(($now_steps+$additional_step+$delta_step) * $interval);
@@ -455,13 +456,13 @@ class MultiotpWrapper extends \Multiotp
                         }
                     } else {
                         $check_step++;
-                        if ($display_status) {
+                        if ($display_status === true) {
                             MultiotpShowStatus($check_step, $max_steps);
                         }
                     }
                 } while (($check_step < $max_steps) && (90 <= $result));
 
-                if ($display_status) {
+                if ($display_status === true) {
                     echo "\r\n";
                 }
                 if (90 <= $result) {
@@ -515,7 +516,7 @@ class MultiotpWrapper extends \Multiotp
      * 
      * @return string
      */
-    function GetUserAlgorithm($user = '') {
+    public function GetUserAlgorithm($user = '') {
         return 'totp';
     }
 }

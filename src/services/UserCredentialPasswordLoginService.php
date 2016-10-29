@@ -50,7 +50,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * @access public
      */             
     public function setUsePassword($flag) {
-        $this->_userPasswordFlag = (bool) $flag;
+        $this->_usePasswordFlag = (bool) $flag;
     }
 
     /**

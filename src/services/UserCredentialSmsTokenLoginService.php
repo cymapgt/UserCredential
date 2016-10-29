@@ -117,7 +117,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
 
             return $this->_multiFactorStages;
         } elseif ($currentStage != 2) {
-            throw new UserCredentialException('The current stage of the multi factor authentic process is in an unknown state', 2103);
+            throw new UserCredentialException('The current stage of the multi factor auth process is in an unknown state', 2101);
         }
         
         //authenticate stage 2

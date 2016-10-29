@@ -24,74 +24,74 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
     }
     
     public function getBaseEntropy() {
-        return parent::_getBaseEntropy();
+        return $this->_getBaseEntropy();
     }
     
     public function getBaseEntropyOverride() {
-        return parent::_getBaseEntropyOverride();
+        return $this->_getBaseEntropyOverride();
     }
     
     public function getBasePasswordPolicy() {
-        return parent::_getBasePasswordPolicy();
+        return $this->_getBasePasswordPolicy();
     }
     
     public function getPasswordEntropyDescription() {
-        return parent::_getPasswordEntropyDescription();
+        return $this->_getPasswordEntropyDescription();
     }
     
     public function getPasswordLengthDescription() {
-        return parent::_getPasswordLengthDescription();
+        return $this->_getPasswordLengthDescription();
     }
     
-    public function getPasswordPolicyDescription() {
-        return parent::_getPasswordPolicyDescription();
+    public function getPasswordPolicyDescription($policyType) {
+        return $this->_getPasswordPolicyDescription($policyType);
     }
     
     public function getUdfEntropy() {
-        return parent::_getUdfEntropy();
+        return $this->_getUdfEntropy();
     }
     
     public function getUdfPasswordPolicy(){
-        return parent::_getUdfPasswordPolicy();
+        return $this->_getUdfPasswordPolicy();
     }
     
     public function setBaseEntropyOverride($toggle) {
-        parent::_setBaseEntropyOverride($toggle);
+        $this->_setBaseEntropyOverride($toggle);
     }
     
     public function setUdfEntropy($entropyObj) {
-        parent::_setUdfEntropy($entropyObj);
+        $this->_setUdfEntropy($entropyObj);
     }
     
     public function setUdfPasswordPolicy($entropyObj) {
-        parent::_setUdfPasswordPolicy($entropyObj);
+        $this->_setUdfPasswordPolicy($entropyObj);
     }
     
     public function validateEntropy() {
-        return parent::_validateEntropy();
+        return $this->_validateEntropy();
     }
     
     public function validateEntropyTotp() {
-        return parent::_validateEntropyTotp();
+        return $this->_validateEntropyTotp();
     }
     
     public function validateLength() {
-        return parent::_validateLength();
+        return $this->_validateLength();
     }
      
     public function validateConsecutiveCharacterRepeat() {
-        return parent::_validateConsecutiveCharacterRepeat();
+        return $this->_validateConsecutiveCharacterRepeat();
     }
     
     public function validatePolicy() {
-        return parent::_validatePolicy();
+        return $this->_validatePolicy();
     }
     
     public function validatePolicyAtChange() {
-        return parent::_validatePolicyAtChange();
+        return $this->_validatePolicyAtChange();
     }
     
     public function canChangePassword() {
-        return parent::_canChangePassword();
+        return $this->_canChangePassword();
     }
 }
