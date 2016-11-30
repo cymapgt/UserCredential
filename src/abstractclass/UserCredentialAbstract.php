@@ -104,6 +104,7 @@ abstract class UserCredentialAbstract
 
         $this->_baseEntropySetting['min_pass_len'] = 8;    //minimum password length
         $this->_baseEntropySetting['max_consecutive_chars'] = 2;    //minimum characters to repeat consecutively
+        $this->_baseEntropySetting['max_consecutive_chars_of_same_class'] = 10;
         $this->_baseEntropySetting['uppercase'] = array (     //requirement and length for various character types
             'toggle'  => true,
             'min_len' => 2
@@ -217,10 +218,19 @@ abstract class UserCredentialAbstract
         if (!isset($entropyObj['max_consecutive_chars'])
             || !is_int($entropyObj['max_consecutive_chars'])
         ) {
-            throw new UserCredentialException('The minimum allowed consecutive character repetition hasn\'t been set', 1003);
+            throw new UserCredentialException('The maximum allowed consecutive character repetition hasn\'t been set', 1003);
         }
         
         $this->_udfEntropySetting['max_consecutive_chars'] =  $entropyObj['max_consecutive_chars'];
+        
+        //validate that minimum allowed password characters of same class to repeat has been set
+        if (!isset($entropyObj['max_consecutive_chars_of_same_class'])
+            || !is_int($entropyObj['max_consecutive_chars_of_same_class'])
+        ) {
+            throw new UserCredentialException('The maximum allowed consecutive character repetition for characters of the same class hasn\'t been set', 1026);
+        }
+        
+        $this->_udfEntropySetting['max_consecutive_chars_of_same_class'] = $entropyObj['max_consecutive_chars_of_same_class'];
         
         //validate that uppercase snippet has correct indices, then set it
         if (!isset($entropyObj['uppercase'])
@@ -446,10 +456,13 @@ abstract class UserCredentialAbstract
                 $patternRegex = "(?=(?:.*[0-9]){{$matchCount}})";
             break;
             case 4:
-                $patternRegex = '(?=(?:.*([-@%+\/\'!#$^*?:.)(}{\[\]~_])){'.$matchCount.'})';
+                $patternRegex = '(?=(?:.*([-@%+\/\'!&#$^*?:.)(}{\[\]~_])){'.$matchCount.'})';
             break;
             case 5:
                 $patternRegex = '((.)\2}?(\2{'.$matchCount.'}))';
+            break;
+            case 6:
+                $patternRegex = '(([a-z]{'.$matchCount.'}|[A-Z]{'.$matchCount.'}|[0-9]{'.$matchCount.'}|[-@%+\/\'!#$&^*?:.)(}{\[\]~_]{'.$matchCount.'}))';
             default:
             break;
         }
@@ -555,6 +568,27 @@ abstract class UserCredentialAbstract
             return "There is no maximum allowed number of repeated characters in password of the same type (e.g. aaa)";
         }
     }
+    
+    /**
+     * Get a description for the entropy policy regarding repeating a character class consecutively
+     * Cyril Ogana<cogana@gmail.com>
+     * 2016-11-30
+     * 
+     * @return string
+     * 
+     * @access protected
+     * @final
+     */
+    final protected function _getPasswordCharacterClassRepeatDescription() {
+        $entropyObj = $this->_getUdfEntropy();
+        
+        if ($entropyObj['max_consecutive_chars_of_same_class'] > 0) {
+            return "The maximum allowed number of repeated characters of the same class in password e.g aaaaBBBB1234 is {$entropyObj['max_consecutive_chars_of_same_class']}";
+        } else {
+            return "There is no maximum allowed number of repeated characters of the same class e.g (aaaaBBBB1234";
+        }
+    }
+    
 
     /**
     * Get a description of the required password policy
@@ -788,6 +822,7 @@ abstract class UserCredentialAbstract
             throw new UserCredentialException('The username and password are not set', 1016);
         }
 
+        //FOR CHARACTER REPETITION
         //determine which entropy to use (base or udf)
         $entropyObj = $this->_udfEntropySetting;
         $maxConsecutiveChars = (int) ($entropyObj['max_consecutive_chars']);
@@ -808,9 +843,31 @@ abstract class UserCredentialAbstract
             throw new UserCredentialException('A fatal error occured in the password validation', 1018);
         } elseif ($testVal == true) {
             throw new UserCredentialException('The password violates policy about consecutive character repetitions. '. $this->_getPasswordCharacterRepeatDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
+        } else {/*Do nothing*/}
+        
+        //FOR CHARACTER CLASS REPETITION
+        //determine which entropy to use (base or udf)
+        $maxConsecutiveCharsSameClass = (int) ($entropyObj['max_consecutive_chars_of_same_class']);
+        
+        //because we offset by -2 when doing regex, if the limit is not greater or equal to 2, default to 2
+        if (!($maxConsecutiveCharsSameClass >= 2)) {
+            $maxConsecutiveCharsSameClass = 2;
+        }
+        
+        //offset for purposes of matching (TODO: fix?)
+        $maxConsecutiveCharsSameClassRegexOffset = ++$maxConsecutiveCharsSameClass;
+        
+        //build regex
+        $maxConsecutiveCharsSameClassRegex = '/' . $this->_regexBuildPattern(6, $maxConsecutiveCharsSameClassRegexOffset) . '/';
+        $testValSameClass = preg_match($maxConsecutiveCharsSameClassRegex,$this->_userProfile['password']);
+
+        if ($testValSameClass === false) {
+            throw new UserCredentialException('A fatal error occured in the password validation', 1018);
+        } elseif ($testValSameClass == true) {
+            throw new UserCredentialException('The password violates policy about consecutive repetition of characters of the same class. '. $this->_getPasswordCharacterClassRepeatDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
         } else {
             return true;
-        }        
+        }                
         
         return true;
     }

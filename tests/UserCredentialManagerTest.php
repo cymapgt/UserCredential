@@ -59,10 +59,12 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     {
         $baseEntropy = $this->object->getBaseEntropy();
         $this->assertInternalType('array', $baseEntropy);
-        $this->assertEquals(8, count($baseEntropy));
+        $this->assertEquals(9, count($baseEntropy));
         $this->assertEquals('min_pass_len', key($baseEntropy));
         next($baseEntropy);
         $this->assertEquals('max_consecutive_chars', key($baseEntropy));
+        next($baseEntropy);
+        $this->assertEquals('max_consecutive_chars_of_same_class', key($baseEntropy));
         next($baseEntropy);
         $this->assertEquals('uppercase', key($baseEntropy));
         next($baseEntropy);        
@@ -110,10 +112,12 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
     {
         $udfEntropy = $this->object->getUdfEntropy();
         $this->assertInternalType('array', $udfEntropy);
-        $this->assertEquals(6, count($udfEntropy));
+        $this->assertEquals(7, count($udfEntropy));
         $this->assertEquals('min_pass_len', key($udfEntropy));
         next($udfEntropy);
         $this->assertEquals('max_consecutive_chars', key($udfEntropy));
+        next($udfEntropy);
+        $this->assertEquals('max_consecutive_chars_of_same_class',key($udfEntropy));
         next($udfEntropy);
         $this->assertEquals('uppercase', key($udfEntropy));
         next($udfEntropy);        
@@ -236,6 +240,34 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $this->object = new UserCredentialManager($userProfileWeak); 
         $this->object->validateConsecutiveCharacterRepeat();
     }
+    
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
+     */ 
+    public function testValidateConsecutiveCharacterClassRepeatException() {
+        //here we repeat 2 characters
+        $userProfileAlmostWeak = array("username"=>"c.ogana",
+                          "password"=>"%stron9Pa55sButRepetition!sBaD2015",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(),
+                          "policyinfo"=>array(),            
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfileAlmostWeak);
+        $this->assertTrue($this->object->validateConsecutiveCharacterRepeat());
+        
+        //here we repeat 3 characters, and expect an exception as per base entropy
+        $this->setExpectedException('cymapgt\Exception\UserCredentialException','The password violates policy about consecutive repetition of characters of the same class.');
+        $userProfileWeak = array("username"=>"c.ogana",
+                          "password"=>"%stron9Pa55sButClassrepetition!sBaD2015",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(),
+                          "policyinfo"=>array(),            
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfileWeak); 
+        $this->object->validateConsecutiveCharacterRepeat();
+    }    
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
@@ -362,6 +394,8 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         $this->object->validatePolicyAtChange();
     }
     
+    
+    
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::canChangePassword
      */
@@ -412,6 +446,7 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         (
             'min_pass_len' => 8,
             'max_consecutive_chars' => 2,
+            'max_consecutive_chars_of_same_class' => 10,
             'uppercase' => Array
                 (
                     'toggle' => true,
@@ -453,6 +488,7 @@ class UserCredentialManagerTest extends \PHPUnit_Framework_TestCase
         (
             'min_pass_len' => 8,
             'max_consecutive_chars' => 2,
+            'max_consecutive_chars_of_same_class' => 10,
             'uppercase' => Array
                 (
                     'toggle' => true,
