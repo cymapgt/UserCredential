@@ -475,6 +475,37 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     }
     
     /**
+     * @covers \cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateTenancy
+     */
+    public function testValidateTenancy() {
+        $userProfile = array("username"=>"c.ogana",
+                          "password"=>"mno",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(
+                            \password_hash('abc', \PASSWORD_DEFAULT),
+                            \password_hash('def', \PASSWORD_DEFAULT),
+                            \password_hash('ghi', \PASSWORD_DEFAULT),
+                            \password_hash('jkl', \PASSWORD_DEFAULT),
+                            \password_hash('mno', \PASSWORD_DEFAULT),
+                            \password_hash('pqr', \PASSWORD_DEFAULT),
+                            \password_hash('stu', \PASSWORD_DEFAULT),
+                            \password_hash('vwx', \PASSWORD_DEFAULT),
+                            \password_hash('xyz', \PASSWORD_DEFAULT)
+                          ), //in reality, these are already bcrypt hashes
+                          "policyinfo"=>array(
+                              'failed_attempt_count' => 0,
+                              'password_last_changed_datetime' => new \DateTime(),
+                              'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10'),
+                              'tenancy_expiry' => new \DateTime('tomorrow')
+                          ),
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfile); 
+        $tenancyIsValid = $this->object->validateTenancy();
+        $this->assertEquals(true, $tenancyIsValid);
+    }
+    
+    /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::passwordStrength
      */    
     public function testPasswordStrength() {
