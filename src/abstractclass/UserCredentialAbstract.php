@@ -28,8 +28,7 @@ abstract class UserCredentialAbstract
     private $_udfEntropySetting   = array();      //A variable to store the user defined entropy
 
     private $_basePasswordPolicy  = array();      //Base password policy maintained by UserCredential class
-    private $_udfPasswordPolicy   = array();      //Udf password policy input by the user
-	
+    private $_udfPasswordPolicy   = array();      //Udf password policy input by the user	
         
     /*
      * Constructor method
@@ -79,6 +78,15 @@ abstract class UserCredentialAbstract
             || !is_array($userProfile['policyinfo'])
         ) {
             throw new UserCredentialException('The user profile is not properly initialized', 1000);
+        }
+        
+        //validate tenancy is a datetime
+        if (array_key_exists('tenancy_expiry', $userProfile['policyinfo'])) {
+            $tenancyExpiry = $userProfile['policyinfo']['tenancy_expiry'];
+            
+            if (($tenancyExpiry instanceof \DateTime) === false) {
+                throw new UserCredentialException('The user profile is not properly initialized', 1000);
+            }
         }
         
         //set a blank TOTP profile if not set
@@ -1005,7 +1013,21 @@ abstract class UserCredentialAbstract
      * @final
      */
     final protected function _validateTenancy() {
-        throw new UserCredentialException('Tenancy problem with your account. Please contact your Administrator');
+        $userProfile = $this->_userProfile;
+        
+        //Verify if the password was changed today or server has been futuredated
+        $currDateTimeObj = new \DateTime();
+        
+        //if account has tenancy expiry, deny login if user account tenancy is past
+        if (array_key_exists('tenancy_expiry', $userProfile['policyinfo'])) {
+            $tenancyExpiry = $userProfile['policyinfo']['tenancy_expiry'];
+            
+            if ($currDateTimeObj > $tenancyExpiry) {
+                throw new UserCredentialException('Tenancy problem with your account. Please contact your Administrator');                
+            }
+        }
+        
+        return true;
     }
     
     /**
