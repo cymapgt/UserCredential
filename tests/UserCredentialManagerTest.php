@@ -443,6 +443,38 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     }
     
     /**
+     * @covers \cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateTenancy
+     * @expectedException \cymapgt\Exception\UserCredentialException
+     * @expectedExceptionMessage Tenancy problem with your account. Please contact your Administrator
+     */ 
+    public function testValidateTenancyException() {
+        $userProfile = array("username"=>"c.ogana",
+                          "password"=>"mno",
+                          "fullname"=>"Cyril Ogana",
+                          "passhash"=>"tiger",
+                          "passhist"=>array(
+                            \password_hash('abc', \PASSWORD_DEFAULT),
+                            \password_hash('def', \PASSWORD_DEFAULT),
+                            \password_hash('ghi', \PASSWORD_DEFAULT),
+                            \password_hash('jkl', \PASSWORD_DEFAULT),
+                            \password_hash('mno', \PASSWORD_DEFAULT),
+                            \password_hash('pqr', \PASSWORD_DEFAULT),
+                            \password_hash('stu', \PASSWORD_DEFAULT),
+                            \password_hash('vwx', \PASSWORD_DEFAULT),
+                            \password_hash('xyz', \PASSWORD_DEFAULT)
+                          ), //in reality, these are already bcrypt hashes
+                          "policyinfo"=>array(
+                              'failed_attempt_count' => 0,
+                              'password_last_changed_datetime' => new \DateTime(),
+                              'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10'),
+                              'tenancy_expiry' => new \DateTime('2017-12-31 00:00:00')
+                          ),
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+        $this->object = new UserCredentialManager($userProfile); 
+        $this->object->validateTenancy();
+    }
+    
+    /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::passwordStrength
      */    
     public function testPasswordStrength() {
