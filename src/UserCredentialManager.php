@@ -83,6 +83,10 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
         return $this->_validateConsecutiveCharacterRepeat();
     }
     
+    public function validateTenancy() {
+        return $this->_validateTenancy();
+    }
+    
     public function validatePolicy() {
         return $this->_validatePolicy();
     }

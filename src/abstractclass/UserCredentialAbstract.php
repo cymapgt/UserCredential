@@ -917,7 +917,8 @@ abstract class UserCredentialAbstract
         }
         
         return true;        
-    }
+    }    
+    
     
     /**
      * validate the password policy during process of making a password change
@@ -988,6 +989,23 @@ abstract class UserCredentialAbstract
         } else {
             return true;
         }
+    }
+        
+    /**
+     *  validate the tenancy of an account. This can be preset by the system admin so that accounts that
+     *  are past tenancy date are automatically not allowed to authenticate. Tenancy should be validated
+     *  after other policies to avoid farming of accounts by testing which ones are still in tenancy
+     * 
+     *  Cyril Ogana <cogana@gmail.com>
+     * 2018-04-25
+     * 
+     * @return bool
+     * 
+     * @access protected
+     * @final
+     */
+    final protected function _validateTenancy() {
+        throw new UserCredentialException('Tenancy problem with your account. Please contact your Administrator');
     }
     
     /**
@@ -1078,5 +1096,6 @@ abstract class UserCredentialAbstract
     abstract public function validateConsecutiveCharacterRepeat();
     abstract public function validatePolicy();
     abstract public function validatePolicyAtChange();
+    abstract public function validateTenancy();
     abstract public function canChangePassword();
 }
