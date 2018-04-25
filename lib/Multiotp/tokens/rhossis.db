@@ -5,19 +5,25 @@ delta_time=0
 description=multiOTP rhossis
 error_counter=0
 format=DECIMAL
+key_id=
+key_usage=
+issue_no=
 issuer=multiOTP
 key_algorithm=totp
 last_error=0
 last_event=-1
 last_login=0
-last_update=1467740091
+last_update=1524652902
 locked=0
 manufacturer=multiOTP
+model=
 number_of_digits=6
 otp=TRUE
+private_id=
+serial_no=
 time_interval=30
 token_algo_suite=HMAC-SHA1
 token_id=
-token_seed:=Wy1FJxUGRHAUOAUpACILU10/EHVbIhc9CRkAbh9wGHkKPBcDXChIKA==
+token_seed:=WCsQcB4BFHZDaVErUCdfBVo7HXALK0Y7DhwAbR4vHixaPxYEWiMadQ==
 token_serial=rhossis
 encryption_hash=378054ADBD372109C8F0F036127153DC
