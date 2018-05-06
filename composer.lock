@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "77bc8f6600d3d9a9ab00e849716291eb",
+    "content-hash": "c96d91188e00405f8b736522e36bdf98",
     "packages": [
         {
             "name": "cymapgt/phpass",
@@ -58,6 +58,150 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "cymapgt/asn1",
+            "version": "0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cymapgt/ASN1.git",
+                "reference": "e110389d8d5c0957590421a800b97ce592354f25"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cymapgt/ASN1/zipball/e110389d8d5c0957590421a800b97ce592354f25",
+                "reference": "e110389d8d5c0957590421a800b97ce592354f25",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FreeDSx\\Asn1\\": "src/FreeDSx/Asn1"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chad Sikorra",
+                    "email": "Chad.Sikorra@gmail.com"
+                }
+            ],
+            "description": "An ASN.1 library for PHP.",
+            "homepage": "https://github.com/FreeDSx/ASN1",
+            "keywords": [
+                "DER",
+                "asn.1",
+                "asn1",
+                "ber",
+                "x.690"
+            ],
+            "time": "2018-05-06T21:41:45+00:00"
+        },
+        {
+            "name": "cymapgt/ldap",
+            "version": "0.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cymapgt/LDAP.git",
+                "reference": "c9f11c4b071f0d38071a05564ec1447a71bb0481"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cymapgt/LDAP/zipball/c9f11c4b071f0d38071a05564ec1447a71bb0481",
+                "reference": "c9f11c4b071f0d38071a05564ec1447a71bb0481",
+                "shasum": ""
+            },
+            "require": {
+                "cymapgt/asn1": "^0.1.0",
+                "cymapgt/socket": "^0.1.0",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^4.0"
+            },
+            "suggest": {
+                "ext-openssl": "For SSL/TLS support."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FreeDSx\\Ldap\\": "src/FreeDSx/Ldap"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chad Sikorra",
+                    "email": "Chad.Sikorra@gmail.com"
+                }
+            ],
+            "description": "A Pure PHP LDAP library",
+            "homepage": "https://github.com/FreeDSx/LDAP",
+            "keywords": [
+                "ldap"
+            ],
+            "time": "2018-05-06T21:59:47+00:00"
+        },
+        {
+            "name": "cymapgt/socket",
+            "version": "0.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cymapgt/Socket.git",
+                "reference": "f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cymapgt/Socket/zipball/f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4",
+                "reference": "f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4",
+                "shasum": ""
+            },
+            "require": {
+                "cymapgt/asn1": "^0.1.0",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpspec/phpspec": "^4.0"
+            },
+            "suggest": {
+                "ext-openssl": "For SSL/TLS support."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FreeDSx\\Socket\\": "src/FreeDSx/Socket"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chad Sikorra",
+                    "email": "Chad.Sikorra@gmail.com"
+                }
+            ],
+            "description": "A simple socket library for FreeDSx",
+            "homepage": "https://github.com/FreeDSx/Socket",
+            "keywords": [
+                "Socket",
+                "tcp",
+                "udp"
+            ],
+            "time": "2018-05-06T21:55:36+00:00"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
