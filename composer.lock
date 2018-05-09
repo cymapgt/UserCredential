@@ -4,60 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c96d91188e00405f8b736522e36bdf98",
+    "content-hash": "4c9ad4d526c336b2df4f70d35d36d402",
     "packages": [
-        {
-            "name": "cymapgt/phpass",
-            "version": "6.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cymapgt/phpass.git",
-                "reference": "658ffc3821a585005f31f5e016cd2d1127c5cc2a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cymapgt/phpass/zipball/658ffc3821a585005f31f5e016cd2d1127c5cc2a",
-                "reference": "658ffc3821a585005f31f5e016cd2d1127c5cc2a",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0.0"
-            },
-            "suggest": {
-                "ext-hash": "Some modules and features may require the HASH Message Digest Framework extension in order to work.",
-                "ext-openssl": "The OpenSSL extension is used as a secure source of random data."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Phpass\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ryan Chouinard",
-                    "email": "rchouinard@gmail.com",
-                    "homepage": "http://ryanchouinard.com"
-                },
-                {
-                    "name": "Cyril Ogana",
-                    "email": "cogana@gmail.com"
-                }
-            ],
-            "description": "PHP Password Library: Easy, secure password management for PHP",
-            "homepage": "https://github.com/cymapgt/phpass",
-            "keywords": [
-                "cryptography",
-                "password"
-            ],
-            "time": "2018-04-24T07:09:14+00:00"
-        }
-    ],
-    "packages-dev": [
         {
             "name": "cymapgt/asn1",
             "version": "0.1.3",
@@ -154,6 +102,56 @@
             "time": "2018-05-06T21:59:47+00:00"
         },
         {
+            "name": "cymapgt/phpass",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/cymapgt/phpass.git",
+                "reference": "658ffc3821a585005f31f5e016cd2d1127c5cc2a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/cymapgt/phpass/zipball/658ffc3821a585005f31f5e016cd2d1127c5cc2a",
+                "reference": "658ffc3821a585005f31f5e016cd2d1127c5cc2a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0"
+            },
+            "suggest": {
+                "ext-hash": "Some modules and features may require the HASH Message Digest Framework extension in order to work.",
+                "ext-openssl": "The OpenSSL extension is used as a secure source of random data."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phpass\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Chouinard",
+                    "email": "rchouinard@gmail.com",
+                    "homepage": "http://ryanchouinard.com"
+                },
+                {
+                    "name": "Cyril Ogana",
+                    "email": "cogana@gmail.com"
+                }
+            ],
+            "description": "PHP Password Library: Easy, secure password management for PHP",
+            "homepage": "https://github.com/cymapgt/phpass",
+            "keywords": [
+                "cryptography",
+                "password"
+            ],
+            "time": "2018-04-24T07:09:14+00:00"
+        },
+        {
             "name": "cymapgt/socket",
             "version": "0.1.1",
             "source": {
@@ -201,7 +199,9 @@
                 "udp"
             ],
             "time": "2018-05-06T21:55:36+00:00"
-        },
+        }
+    ],
+    "packages-dev": [
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
