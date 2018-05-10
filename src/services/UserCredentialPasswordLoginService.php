@@ -3,7 +3,8 @@ namespace cymapgt\core\application\authentication\UserCredential\services;
 
 use cymapgt\Exception\UserCredentialException;
 use cymapgt\core\application\authentication\UserCredential\abstractclass\UserCredentialAuthenticationInterface;
-
+use cymapgt\core\application\authentication\UserCredential\traits\UserCredentialAuthenticationTrait;
+    
 /**
  * UserCredentialPasswordLoginService
  * This service creates password hashes using the BCRYPT cipher
@@ -22,6 +23,10 @@ use cymapgt\core\application\authentication\UserCredential\abstractclass\UserCre
 
 class UserCredentialPasswordLoginService implements UserCredentialAuthenticationInterface
 {
+    use UserCredentialAuthenticationTrait {
+        UserCredentialAuthenticationTrait::authenticate as authenticateByPlatform;
+    }    
+    
     //flags
     protected $_usePasswordFlag = true;  //whether the auth is password based (at some stage or fully)
     protected $_multiFactorFlag = false; //whether the auth service is multi factor
@@ -34,6 +39,9 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
     //multi factor auth
     protected $_multiFactorHandler = null;    //the handler instance for mutli factor auth (if delegated)
     protected $_multiFactorStages  = array(); //the stages of multi factor auth (if to be delegated)
+    
+    //password login platform (default is native)
+    protected $_passwordAuthenticationPlatform = 1;
     
     //Constructor method
     public function __construct() {
@@ -191,7 +199,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * @access public
      */
     public function authenticate() {
-        return \password_verify($this->_inputPassword, $this->_currentPassword);
+        return $this->authenticateByPlatform();
     }
     
     /**
@@ -240,9 +248,21 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @return mixed - The hashed password
      * 
-     * @access public
+     * @access public48
      */
     public function getCurrentPassword() {
         return $this->_currentPassword;
+    }
+    
+    /**
+     * Set the authentication platform  to use
+     * 
+     *  Cyril Ogana <cogana@gmail.com> 
+     *  2018
+     * 
+     * @param type $authenticationPlatform
+     */
+    public function setAuthenticationPlatform($authenticationPlatform) {
+        $this->_passwordAuthenticationPlatform = $authenticationPlatform;
     }
 }

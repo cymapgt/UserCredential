@@ -94,7 +94,12 @@ The objectives of the Package are
     const USERCREDENTIAL_ACCOUNTSTATE_AUTHFAILED  = 7;
     const USERCREDENTIAL_ACCOUNTSTATE_WEAKPASSWD  = 8;
 
-    //UserCredential constants for account policy actions
+    /**
+     * UserCredential constants for account policy actions. These also serve as
+     * exception codes during the authentication and policy check process.
+     * Internal Exception codes are documented in the EXCEPTIONS.md file
+     */
+
     const USERCREDENTIAL_ACCOUNTPOLICY_VALID         = 1;
     const USERCREDENTIAL_ACCOUNTPOLICY_EXPIRED       = 2;
     const USERCREDENTIAL_ACCOUNTPOLICY_ATTEMPTLIMIT1 = 3;
@@ -144,6 +149,8 @@ The service comes with 3 Password Authenticating Services which you can Choose F
 A Wiki for using each of the services as well as on implementing password policy is
 in the pipeline. This article here http://bit.ly/29m2aWL that explains using a DB 
 as a backend store might assist with getting started on using the package.
+
+Check the test file for these services for some documentation on their workings.
 
 ##### UserCredentialPasswordLoginService
 
