@@ -25,6 +25,8 @@
 | 1023 | Multi factor auth is flagged on, but the encryption key length is not properly initialized  |
 | 1024 |TOTP info is not set in the users profile  |
 | 1025 | The encryption key string length for TOTP hashing is too short  |
+| 1026 | The maximum allowed consecutive character repetition for characters of the same class hasn't been set
+| 1027 | Tenancy problem with your account. Please contact your Administrator
 
 ### EXCEPTIONS FOR USERCREDENTIAL BASIC PASSWORD LOGIN SERVICE
 
