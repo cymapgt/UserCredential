@@ -43,6 +43,9 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
     //password login platform (default is native)
     protected $_passwordAuthenticationPlatform = 1;
     
+    //platform settings for the appropriate platform
+    protected $_passwordAuthenticationPlatformSettings = array();
+    
     //Constructor method
     public function __construct() {
         
@@ -262,7 +265,43 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @param type $authenticationPlatform
      */
-    public function setAuthenticationPlatform($authenticationPlatform) {
+    public function setPasswordAuthenticationPlatform($authenticationPlatform) {
         $this->_passwordAuthenticationPlatform = $authenticationPlatform;
+    }
+    
+    /**
+     * Get the authentication platform  to use
+     * 
+     *  Cyril Ogana <cogana@gmail.com> 
+     *  2018
+     * 
+     * @return  int
+     */
+    public function getPasswordAuthenticationPlatform() {
+        return $this->_passwordAuthenticationPlatform;
+    }
+
+    /**
+     * Set the the password authentication platform settings for the appropriate platform
+     * 
+     *  Cyril Ogana <cogana@gmail.com> 
+     *  2018
+     * 
+     * @param  array
+     */    
+    public function setPasswordAuthenticationPlatformSettings($platformSettings) {
+        $this->_passwordAuthenticationPlatformSettings = $platformSettings;
+    }
+    
+    /**
+     * Get the the password authentication platform settings for the appropriate platform
+     * 
+     *  Cyril Ogana <cogana@gmail.com> 
+     *  2018
+     * 
+     * @return array
+     */
+    public function getPasswordAuthenticationPlatformSettings() {
+        return $this->_passwordAuthenticationPlatformSettings;
     }
 }

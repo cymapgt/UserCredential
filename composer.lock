@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c9ad4d526c336b2df4f70d35d36d402",
+    "content-hash": "86b0d974cc73b666ee60beae9b397206",
     "packages": [
         {
             "name": "cymapgt/asn1",
-            "version": "0.1.3",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cymapgt/ASN1.git",
-                "reference": "e110389d8d5c0957590421a800b97ce592354f25"
+                "reference": "5ce6832cfbf6ea9583d947b4773dbfbaa8df57c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cymapgt/ASN1/zipball/e110389d8d5c0957590421a800b97ce592354f25",
-                "reference": "e110389d8d5c0957590421a800b97ce592354f25",
+                "url": "https://api.github.com/repos/cymapgt/ASN1/zipball/5ce6832cfbf6ea9583d947b4773dbfbaa8df57c4",
+                "reference": "5ce6832cfbf6ea9583d947b4773dbfbaa8df57c4",
                 "shasum": ""
             },
             "require": {
@@ -51,29 +51,36 @@
                 "ber",
                 "x.690"
             ],
-            "time": "2018-05-06T21:41:45+00:00"
+            "time": "2018-06-03T22:58:46+00:00"
         },
         {
             "name": "cymapgt/ldap",
-            "version": "0.4.2",
+            "version": "0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cymapgt/LDAP.git",
-                "reference": "c9f11c4b071f0d38071a05564ec1447a71bb0481"
+                "reference": "a271c71ccf717e6150172c241845e7ee0b1d747b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cymapgt/LDAP/zipball/c9f11c4b071f0d38071a05564ec1447a71bb0481",
-                "reference": "c9f11c4b071f0d38071a05564ec1447a71bb0481",
+                "url": "https://api.github.com/repos/cymapgt/LDAP/zipball/a271c71ccf717e6150172c241845e7ee0b1d747b",
+                "reference": "a271c71ccf717e6150172c241845e7ee0b1d747b",
                 "shasum": ""
             },
             "require": {
-                "cymapgt/asn1": "^0.1.0",
-                "cymapgt/socket": "^0.1.0",
-                "php": ">=7.0"
+                "cymapgt/asn1": "^0.2.1",
+                "cymapgt/socket": "^0.2.1",
+                "php": ">=7.0.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "^4.0"
+                "phpspec/phpspec": "^4.0",
+                "symfony/console": "^3.2",
+                "symfony/debug": "^3.2",
+                "symfony/event-dispatcher": "^3.2",
+                "symfony/filesystem": "^3.2",
+                "symfony/finder": "^3.2",
+                "symfony/process": "^3.2",
+                "symfony/yaml": "^3.2"
             },
             "suggest": {
                 "ext-openssl": "For SSL/TLS support."
@@ -99,7 +106,7 @@
             "keywords": [
                 "ldap"
             ],
-            "time": "2018-05-06T21:59:47+00:00"
+            "time": "2018-06-05T00:08:06+00:00"
         },
         {
             "name": "cymapgt/phpass",
@@ -153,27 +160,35 @@
         },
         {
             "name": "cymapgt/socket",
-            "version": "0.1.1",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cymapgt/Socket.git",
-                "reference": "f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4"
+                "reference": "634bd9d34c52f14b9d8fdb7d50a02f94d7f879d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cymapgt/Socket/zipball/f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4",
-                "reference": "f5b04148c5120ad1f4ca5468092eb40f5d3a6fb4",
+                "url": "https://api.github.com/repos/cymapgt/Socket/zipball/634bd9d34c52f14b9d8fdb7d50a02f94d7f879d4",
+                "reference": "634bd9d34c52f14b9d8fdb7d50a02f94d7f879d4",
                 "shasum": ""
             },
             "require": {
-                "cymapgt/asn1": "^0.1.0",
                 "php": ">=7.0"
             },
             "require-dev": {
-                "phpspec/phpspec": "^4.0"
+                "cymapgt/asn1": "^0.2.1",
+                "phpspec/phpspec": "^4.0",
+                "symfony/console": "^3.2",
+                "symfony/debug": "^3.2",
+                "symfony/event-dispatcher": "^3.2",
+                "symfony/filesystem": "^3.2",
+                "symfony/finder": "^3.2",
+                "symfony/process": "^3.2",
+                "symfony/yaml": "^3.2"
             },
             "suggest": {
-                "ext-openssl": "For SSL/TLS support."
+                "ext-openssl": "For SSL/TLS support.",
+                "freedsx/asn1": "For ASN.1 based message queues."
             },
             "type": "library",
             "autoload": {
@@ -198,7 +213,7 @@
                 "tcp",
                 "udp"
             ],
-            "time": "2018-05-06T21:55:36+00:00"
+            "time": "2018-06-04T01:16:33+00:00"
         }
     ],
     "packages-dev": [
@@ -255,6 +270,39 @@
                 "instantiate"
             ],
             "time": "2015-06-14T21:17:01+00:00"
+        },
+        {
+            "name": "geerlingguy/ping",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geerlingguy/Ping.git",
+                "reference": "b16248c0a59a6555437744db8b78c0589cfc32f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geerlingguy/Ping/zipball/b16248c0a59a6555437744db8b78c0589cfc32f9",
+                "reference": "b16248c0a59a6555437744db8b78c0589cfc32f9",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "JJG/Ping.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jeff Geerling",
+                    "email": "jeff@jeffgeerling.com"
+                }
+            ],
+            "description": "A PHP class to ping hosts.",
+            "time": "2017-02-02T15:38:40+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -953,16 +1001,16 @@
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "5.0.6",
+            "version": "5.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "33fd41a76e746b8fa96d00b49a23dadfa8334cdf"
+                "reference": "3eaf040f20154d27d6da59ca2c6e28ac8fd56dce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/33fd41a76e746b8fa96d00b49a23dadfa8334cdf",
-                "reference": "33fd41a76e746b8fa96d00b49a23dadfa8334cdf",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/3eaf040f20154d27d6da59ca2c6e28ac8fd56dce",
+                "reference": "3eaf040f20154d27d6da59ca2c6e28ac8fd56dce",
                 "shasum": ""
             },
             "require": {
@@ -1008,7 +1056,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2018-01-06T05:45:45+00:00"
+            "time": "2018-05-29T13:50:43+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",

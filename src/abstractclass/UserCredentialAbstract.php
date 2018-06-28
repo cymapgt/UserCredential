@@ -76,6 +76,7 @@ abstract class UserCredentialAbstract
             || !isset($userProfile['account_state'])
             || !isset($userProfile['policyinfo'])
             || !is_array($userProfile['policyinfo'])
+            || !is_array($userProfile['platforminfo'])
         ) {
             throw new UserCredentialException('The user profile is not properly initialized', 1000);
         }

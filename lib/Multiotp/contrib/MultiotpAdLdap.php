@@ -1397,5 +1397,4 @@ class MultiotpAdLdap {
         return ($group_array);	
     }
 }
-
 ?>

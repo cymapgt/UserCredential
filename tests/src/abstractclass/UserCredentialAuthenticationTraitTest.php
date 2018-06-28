@@ -40,21 +40,30 @@ class UserCredentialAuthenticationTraitTest extends \PHPUnit\Framework\TestCase
         
         $this->object = $userCredentialPasswordLoginService;
         
+        chdir(dirname(__FILE__));
+        $ldapServerPath = "../../files/FreeDsxLdapServer.php";
+        $ldapServerPathFq = realpath($ldapServerPath);
+        \exec("php \"$ldapServerPathFq\" > /dev/null &");
+        //sleep(10000);
         
-        //verify ldap port is open
-        /*$ldapConnection = @fsockopen('localhost', 33389);
-        
-        if (is_resource($ldapConnection)) {
-            throw new \Exception("There is a service already running on port 33389. Cannot setup FreeDsx LDAP Server");
-        }
-        
-        $ldapServer = new Ldap\LdapServer([
-            'dse_alt_server' => 'dc2.local',
-            'port' => 33389,
+        $ldap = new Ldap\LdapClient([
+            # The base_dn as the default for all searches (if not explicitly defined)
+            'base_dn' => 'cn=read-only-admin,dc=example,dc=com',
+            # An array of servers to try to connect to
+            'servers' => ['ldap.forumsys.com'],
         ]);
         
-        $this->ldapServer = $ldapServer;
-        $this->ldapServer->run();*/
+        try {
+            $ldap->bind('uid=gauss,dc=example,dc=com', 'password');
+            die(print_r($ldap));
+        } catch (BindException $e) {
+           echo sprintf('Error (%s): %s', $e->getCode(), $e->getMessage());
+           exit;
+        }        
+    }
+    
+    protected function tearDown() {
+        \exec("fuser -k 33389/tcp  > /dev/null &");
     }
     
     /**
@@ -65,5 +74,15 @@ class UserCredentialAuthenticationTraitTest extends \PHPUnit\Framework\TestCase
         $this->object->setAuthenticationPlatform($authenticationPlatform);
         
         $this->assertEquals(true, $this->object->authenticate());
+    }
+    
+    /**
+     * @covers cymapgt\core\application\authentication\UserCredential\abstractclass\UserCredentialAuthenticationTrait::authenticate
+     */
+    public function testAuthenticationLdap() {
+        $authenticationPlatform = \USERCREDENTIAL_PASSWORDLOGINPLATFORM_LDAP;
+        $this->object->setAuthenticationPlatform($authenticationPlatform);
+        
+        
     }
 }

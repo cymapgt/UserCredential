@@ -18,6 +18,11 @@ use cymapgt\Exception\UserCredentialException;
 class MultiotpWrapper extends \Multiotp
 {
     /**
+     * Override constructor
+     */
+    public function __construct() {}
+    
+    /**
      * Generate SMS token for systems handling authentication task of user management
      * outside of multiotp infrastructure
     * Cyril Ogana <cogana@gmail.com>
