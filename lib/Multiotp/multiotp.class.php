@@ -5975,6 +5975,7 @@ class Multiotp
   function DisableLdapActivated()
   {
       $this->SetLdapActivated(0);
+      $this->SetLdapSsl(0);
   }
 
 
@@ -13858,7 +13859,6 @@ class Multiotp
                       $result = TRUE;
                   } else {
                       if ($this->GetVerboseFlag()) {
-                          // echo "DEBUG LDAP: ".ldap_error($ldapconn);
                           $this->WriteLog("DEBUG: LDAP: ".ldap_error($ldapconn));
                       }
                   }

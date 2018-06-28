@@ -4,7 +4,7 @@ namespace cymapgt\core\application\authentication\UserCredential\traits;
 use cymapgt\Exception\UserCredentialException;
 
 /**
- * Traits for varous authentication methods that can be used at various levels
+ * Traits for various authentication methods that can be used at various levels
  * of the login stage e.g. Something you know can be password login natively
  * or via LDAP
  *
@@ -14,15 +14,20 @@ use cymapgt\Exception\UserCredentialException;
  * @author      Cyril Ogana <cogana@gmail.com>
  * @abstract
 */
-
-/**
- * Native password authentication
- */
 trait UserCredentialAuthenticationTrait {
     use
         UserCredentialAuthenticationNativeTrait,
         UserCredentialAuthenticationLdapTrait;
             
+    /**
+     * Authenticate a users username/password credentials using the requested platform
+     * 
+     *  Cyril Ogana <cogana@gmail.com> 
+     *  2018
+     * 
+     * @return bool
+     * @throws UserCredentialException
+     */
     function authenticate() {
         switch ($this->_passwordAuthenticationPlatform) {
             case \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE:
