@@ -22,13 +22,13 @@
     "description" : "Package for Password authentication policy management",
     "license" : "BSD-3-clause",
     "require" : {
-        "php" : ">=7.0.0",
+        "php" : ">=7.1.0",
         "cymapgt/phpass" : "^6.0.0",
-        "cymapgt/ldap" : "^0.5.0"
+        "freedsx/ldap" : "*"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "6.*",
-        "geerlingguy/Ping" : "*"
+        "phpunit/phpunit" : "7.*",
+        "geerlingguy/ping" : "*"
     },
     "support" : {
         "email" : "cogana@gmail.com",

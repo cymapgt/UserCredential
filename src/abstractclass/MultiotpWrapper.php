@@ -20,7 +20,9 @@ class MultiotpWrapper extends \Multiotp
     /**
      * Override constructor
      */
-    public function __construct() {}
+    public function __construct() {
+        parent::__construct();
+    }
     
     /**
      * Generate SMS token for systems handling authentication task of user management

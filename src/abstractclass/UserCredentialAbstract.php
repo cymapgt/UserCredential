@@ -64,6 +64,7 @@ abstract class UserCredentialAbstract
     * @access private
     */
     private function _initializeProfile($userProfile) {
+        die(print_r($userProfile));
         //validate that user profile has the correct information for password validation
         if (!is_array($userProfile)
             || !isset($userProfile['username'])
@@ -508,24 +509,24 @@ abstract class UserCredentialAbstract
         }
         
         if ($entropyObj['uppercase']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true?  false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true?  false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $uppercaseLen   = $entropyObj['uppercase']['min_len'];
             $description   .= "$concatenator at least $uppercaseLen uppercase characters";
             $hasEntropy     = true;     
         }
         
         if ($entropyObj['numeric']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true ? false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true ? false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $numericLen     = $entropyObj['numeric']['min_len'];
             $description   .= "$concatenator at least $numericLen numeric characters";
             $hasEntropy     = true;     
         }
 
         if ($entropyObj['special']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true ? false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true ? false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $specialLen     = $entropyObj['special']['min_len'];
             $description   .= "$concatenator at least $specialLen special characters";
             $hasEntropy     = true;     
