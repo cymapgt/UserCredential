@@ -23,79 +23,79 @@ class UserCredentialManager extends abstractclass\UserCredentialAbstract
         parent::__construct($userProfile);
     }
     
-    public function getBaseEntropy() {
+    public function getBaseEntropy(): array {
         return $this->_getBaseEntropy();
     }
     
-    public function getBaseEntropyOverride() {
+    public function getBaseEntropyOverride(): bool {
         return $this->_getBaseEntropyOverride();
     }
     
-    public function getBasePasswordPolicy() {
+    public function getBasePasswordPolicy(): array {
         return $this->_getBasePasswordPolicy();
     }
     
-    public function getPasswordEntropyDescription() {
+    public function getPasswordEntropyDescription(): string {
         return $this->_getPasswordEntropyDescription();
     }
     
-    public function getPasswordLengthDescription() {
+    public function getPasswordLengthDescription(): string {
         return $this->_getPasswordLengthDescription();
     }
     
-    public function getPasswordPolicyDescription($policyType) {
+    public function getPasswordPolicyDescription(string $policyType): string {
         return $this->_getPasswordPolicyDescription($policyType);
     }
     
-    public function getUdfEntropy() {
+    public function getUdfEntropy(): array {
         return $this->_getUdfEntropy();
     }
     
-    public function getUdfPasswordPolicy(){
+    public function getUdfPasswordPolicy(): array{
         return $this->_getUdfPasswordPolicy();
     }
     
-    public function setBaseEntropyOverride($toggle) {
+    public function setBaseEntropyOverride(bool $toggle) {
         $this->_setBaseEntropyOverride($toggle);
     }
     
-    public function setUdfEntropy($entropyObj) {
+    public function setUdfEntropy(array $entropyObj) {
         $this->_setUdfEntropy($entropyObj);
     }
     
-    public function setUdfPasswordPolicy($entropyObj) {
+    public function setUdfPasswordPolicy(array $entropyObj) {
         $this->_setUdfPasswordPolicy($entropyObj);
     }
     
-    public function validateEntropy() {
+    public function validateEntropy(): bool {
         return $this->_validateEntropy();
     }
     
-    public function validateEntropyTotp() {
+    public function validateEntropyTotp(): bool {
         return $this->_validateEntropyTotp();
     }
     
-    public function validateLength() {
+    public function validateLength(): bool {
         return $this->_validateLength();
     }
      
-    public function validateConsecutiveCharacterRepeat() {
+    public function validateConsecutiveCharacterRepeat(): bool {
         return $this->_validateConsecutiveCharacterRepeat();
     }
     
-    public function validateTenancy() {
+    public function validateTenancy(): bool {
         return $this->_validateTenancy();
     }
     
-    public function validatePolicy() {
+    public function validatePolicy(): bool {
         return $this->_validatePolicy();
     }
     
-    public function validatePolicyAtChange() {
+    public function validatePolicyAtChange(): bool {
         return $this->_validatePolicyAtChange();
     }
     
-    public function canChangePassword() {
+    public function canChangePassword(): bool {
         return $this->_canChangePassword();
     }
 }
