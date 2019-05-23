@@ -25,7 +25,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
 {
     use UserCredentialAuthenticationTrait {
         UserCredentialAuthenticationTrait::authenticate as authenticateByPlatform;
-    }    
+    }
     
     //flags
     protected $_usePasswordFlag = true;  //whether the auth is password based (at some stage or fully)
@@ -60,7 +60,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */             
-    public function setUsePassword($flag) {
+    public function setUsePassword(bool $flag) {
         $this->_usePasswordFlag = (bool) $flag;
     }
 
@@ -73,7 +73,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */             
-    public function getUsePassword() {
+    public function getUsePassword(): bool {
         return $this->_usePasswordFlag;
     }
     
@@ -82,11 +82,11 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      *
      * Cyril Ogana <cogana@gmail.com>- 2014-02-13
      *
-     * @param bool $password - the user password in raw text
+     * @param string $password - the user password in raw text
      *
      * @access public
      */             
-    public function setPassword($password) {
+    public function setPassword(string $password) {
         $this->_inputPassword = (string) $password;
     }
     
@@ -95,13 +95,13 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
-     * @param  $unhashed - flag if true, return unhashed
+     * @param  bool $unhashed - flag if true, return unhashed
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * 
      * @access public
      */
-    public function getPassword($unhashed = false) {
+    public function getPassword(bool $unhashed = false): string {
         if((bool) $unhashed === true){
             return $this->_inputPassword;
         }else{
@@ -118,7 +118,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setMultiFactor($flag) {
+    public function setMultiFactor(bool $flag) {
         $this->_multiFactorFlag = (bool) $flag;
     }
     
@@ -133,7 +133,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public 
      */
-    public function setMultiFactorHandler($handler) {
+    public function setMultiFactorHandler(string $handler) {
         $this->_multiFactorHandler = (string) $handler;
     }
     
@@ -147,7 +147,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getMultiFactorHandler() {
+    public function getMultiFactorHandler(): object {
         return $this->_multiFactorHandler;
     }
     
@@ -157,11 +157,11 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
-     * @param Array $stages - The stages of the log in session
+     * @param array $stages - The stages of the log in session
      * 
      * @access public
      */
-    public function setMultiFactorStages(Array $stages) {
+    public function setMultiFactorStages(array $stages) {
         $this->_multiFactorStages = $stages;
     }
     
@@ -174,7 +174,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getMultiFactorStages() {
+    public function getMultiFactorStages(): array {
         return $this->_multiFactorStages;
     }
     
@@ -214,7 +214,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function setCurrentUsername($username) {
+    public function setCurrentUsername(string $username) {
         $this->_currentUsername = (string) $username;
     }
     
@@ -227,7 +227,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @access public
      */
-    public function getCurrentUsername() {
+    public function getCurrentUsername(): string {
         return $this->_currentUsername;
     }
     
@@ -236,11 +236,11 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
-     * @param mixed  $password - The current password hash
+     * @param string  $password - The current password hash
      * 
      * @access public
      */
-    public function setCurrentPassword($password) {
+    public function setCurrentPassword(string $password) {
         $this->_currentPassword = $password;
     }
     
@@ -249,11 +249,11 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
-     * @return mixed - The hashed password
+     * @return string - The hashed password
      * 
      * @access public48
      */
-    public function getCurrentPassword() {
+    public function getCurrentPassword(): string {
         return $this->_currentPassword;
     }
     
@@ -265,7 +265,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @param int $authenticationPlatform
      */
-    public function setPasswordAuthenticationPlatform($authenticationPlatform) {
+    public function setPasswordAuthenticationPlatform(int $authenticationPlatform) {
         $this->_passwordAuthenticationPlatform = $authenticationPlatform;
     }
     
@@ -277,7 +277,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @return  int
      */
-    public function getPasswordAuthenticationPlatform() {
+    public function getPasswordAuthenticationPlatform(): int {
         return $this->_passwordAuthenticationPlatform;
     }
 
@@ -289,7 +289,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @param  array
      */    
-    public function setPasswordAuthenticationPlatformSettings($platformSettings) {
+    public function setPasswordAuthenticationPlatformSettings(array $platformSettings) {
         $this->_passwordAuthenticationPlatformSettings = $platformSettings;
     }
     
@@ -301,7 +301,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      * 
      * @return array
      */
-    public function getPasswordAuthenticationPlatformSettings() {
+    public function getPasswordAuthenticationPlatformSettings(): array {
         return $this->_passwordAuthenticationPlatformSettings;
     }
 }

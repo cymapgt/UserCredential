@@ -162,7 +162,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * 
      * @access public
      */    
-    public function setUserTotpProfile($totpProfile) {
+    public function setUserTotpProfile(array $totpProfile) {
         if (!(is_array($totpProfile))) {
             throw new UserCredentialException('The TOTP Profile must be an array', 2104);
         }
@@ -178,7 +178,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * @return array
      * @access public 
      */
-    public function getUserTotpProfile() {
+    public function getUserTotpProfile(): array {
         return $this->userTotpProfile;
     }
     
@@ -191,7 +191,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * 
      * @access public
      */    
-    public function setEncKeyLength($keyLength) {
+    public function setEncKeyLength(int $keyLength) {
         $keyLengthCast = (int) $keyLength;
         
         if (!($keyLengthCast > 0)) {
@@ -209,7 +209,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * @return int
      * @access public 
      */
-    public function getEncKeyLength() {
+    public function getEncKeyLength(): int {
         return $this->keyLength;
     }
     
@@ -223,7 +223,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * 
      * @access public
      */     
-    public function setVerificationHash($verificationHash) {
+    public function setVerificationHash(string $verificationHash) {
         $this->verificationHash = (string) $verificationHash;
     }
     
@@ -235,7 +235,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * @return string
      * @access public 
      */    
-    public function getVerificationHash() {
+    public function getVerificationHash(): string {
         return $this->verificationHash;
     }
 
@@ -248,7 +248,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * 
      * @access public
      */     
-    public function setOneTimeToken($verificationToken) {
+    public function setOneTimeToken(string $verificationToken) {
         $this->oneTimeToken = (string) $verificationToken;
     }
     
@@ -257,10 +257,10 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * 
      * Cyril Ogana <cogana@gmail.com> - 2015-07-24
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * @access public
      */    
-    public function getOneTimeToken() {
+    public function getOneTimeToken(): string {
         return $this->oneTimeToken;
     } 
     
@@ -272,7 +272,7 @@ class UserCredentialGoogleAuthLoginService extends UserCredentialPasswordLoginSe
      * @return boolean
      * @throws UserCredentialException
      */
-    protected function checkToken() {
+    protected function checkToken(): bool {
         //instantiate MultiOtp Wrapper
         $multiOtpWrapper = new MultiotpWrapper();
         
