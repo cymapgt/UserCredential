@@ -40,7 +40,8 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "totpinfo"=>array(
                               'enc_key' => 'iamanenkkeyandiamoftherequiredlength:)'
                           ),
-                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
+                          "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN,
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE));        
         $this->object = new UserCredentialManager($userProfile);
     }
 
@@ -177,6 +178,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileWeak);
         $this->object->validateEntropy();
@@ -210,6 +212,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileWeak);
         $this->object->validateLength();
@@ -228,6 +231,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileAlmostWeak);
         $this->assertTrue($this->object->validateConsecutiveCharacterRepeat());
@@ -239,6 +243,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),          
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileWeak); 
         $this->object->validateConsecutiveCharacterRepeat();
@@ -257,6 +262,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileAlmostWeak);
         $this->assertTrue($this->object->validateConsecutiveCharacterRepeat());
@@ -268,6 +274,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array(),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfileWeak); 
         $this->object->validateConsecutiveCharacterRepeat();
@@ -285,6 +292,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "passhash"=>"tiger",
                           "passhist"=>array(),
                           "policyinfo"=>array('failed_attempt_count' => 4),            
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_AUTHFAILED);        
         $this->object = new UserCredentialManager($userProfileWeak);
         $this->object->validatePolicy();       
@@ -307,6 +315,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'password_last_changed_datetime' => new \DateTime('2014-03-01'),
                               'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),         
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile);
         $this->object->validatePolicy();
@@ -329,6 +338,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'password_last_changed_datetime' => new \DateTime('2015-05-01'),
                               'last_login_attempt_datetime' => new \DateTime('2015-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile);
         $this->object->validateEntropy();
@@ -351,6 +361,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'password_last_changed_datetime' => new \DateTime('2015-05-01'),
                               'last_login_attempt_datetime' => new \DateTime('2015-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile);
         $this->object->validateEntropy();
@@ -373,6 +384,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'password_last_changed_datetime' => new \DateTime('2015-05-01'),
                               'last_login_attempt_datetime' => new \DateTime('2015-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile1);
         $this->object->validateEntropy();        
@@ -404,6 +416,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'password_last_changed_datetime' => new \DateTime('2014-05-04'),
                               'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile); 
         $this->object->validatePolicyAtChange();
@@ -415,6 +428,10 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::canChangePassword
      */
     public function testValidatePolicyCanChangePassword() {
+        $interval = new \DateInterval('P1M');
+        $dateTimeDummyPwChange = new \DateTime();
+        $dateTimeDummyPwChange->add($interval);
+        
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"mno",
                           "fullname"=>"Cyril Ogana",
@@ -432,9 +449,10 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           ), //in reality, these are already bcrypt hashes
                           "policyinfo"=>array(
                               'failed_attempt_count' => 0,
-                              'password_last_changed_datetime' => new \DateTime(),
+                              'password_last_changed_datetime' => $dateTimeDummyPwChange,
                               'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile); 
         $canChangePassword = $this->object->canChangePassword();
@@ -469,6 +487,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10'),
                               'tenancy_expiry' => new \DateTime('2017-12-31 00:00:00')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile); 
         $this->object->validateTenancy();
@@ -499,6 +518,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                               'last_login_attempt_datetime' => new \DateTime('2014-03-01 23:45:10'),
                               'tenancy_expiry' => new \DateTime('tomorrow')
                           ),
+                          "platforminfo" => array('authmethod' => \USERCREDENTIAL_PASSWORDLOGINPLATFORM_NATIVE),
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile); 
         $tenancyIsValid = $this->object->validateTenancy();

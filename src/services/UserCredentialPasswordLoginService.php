@@ -263,7 +263,7 @@ class UserCredentialPasswordLoginService implements UserCredentialAuthentication
      *  Cyril Ogana <cogana@gmail.com> 
      *  2018
      * 
-     * @param type $authenticationPlatform
+     * @param int $authenticationPlatform
      */
     public function setPasswordAuthenticationPlatform($authenticationPlatform) {
         $this->_passwordAuthenticationPlatform = $authenticationPlatform;

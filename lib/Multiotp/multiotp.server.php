@@ -26,18 +26,18 @@
  *
  * PHP 5.3.0 or higher is supported.
  *
- * @author    Andre Liechti, SysCo systemes de communication sa, <developer@sysco.ch>
- * @version   5.1.1.2
- * @date      2018-03-20
+ * @author    Andre Liechti, SysCo systemes de communication sa, <info@multiotp.net>
+ * @version   5.4.1.6
+ * @date      2019-01-25
  * @since     2013-08-06
- * @copyright (c) 2013-2018 SysCo systemes de communication sa
+ * @copyright (c) 2013-2019 SysCo systemes de communication sa
  * @copyright GNU Lesser General Public License
  *
  *//*
  *
  * LICENCE
  *
- *   Copyright (c) 2010-2018 SysCo systemes de communication sa
+ *   Copyright (c) 2010-2019 SysCo systemes de communication sa
  *   SysCo (tm) is a trademark of SysCo systemes de communication sa
  *   (http://www.sysco.ch)
  *   All rights reserved.
@@ -68,7 +68,7 @@
  * Special issues
  *
  *   If you need specific developments concerning strong authentication,
- *   do not hesitate to contact us per email at developer@sysco.ch.
+ *   do not hesitate to contact us per email at info@multiotp.net.
  *
  *
  * Users feedbacks and comments
@@ -84,6 +84,9 @@
  *
  * Change Log
  *
+ *   2019-01-24 5.4.1.5 SysCo/al If any, clean specific NTP DHCP option at every reboot
+ *   2019-01-07 5.4.1.1 SysCo/al Raspberry Pi 3B+ support
+ *   2018-08-21 5.3.0.0 SysCo/al without2FA algorithm added
  *   2017-07-07 5.0.4.9 SysCo/al Code cleaning, possible web information added
  *   2017-05-29 5.0.4.5 SysCo/al Restore configuration added
  *                               Fixed configuration file directory under Windows
@@ -1275,6 +1278,7 @@ if (FALSE !== mb_strpos($data,'<multiOTP')) {
                                 <option value="TOTP" selected="selected">TOTP</option>
                                 <option value="HOTP">HOTP</option>
                                 <option value="MOTP">MOTP</option>
+                                <option value="without2FA">without2FA</option>
                             </select>
                         </td>
                     </tr>

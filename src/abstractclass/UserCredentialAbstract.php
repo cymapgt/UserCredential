@@ -36,7 +36,7 @@ abstract class UserCredentialAbstract
      * 
      * @param array userProfile - array of user credential information
      */
-    public function __construct($userProfile) {
+    public function __construct(iterable $userProfile) {
         $this->_initialize($userProfile);
     }
 	
@@ -48,7 +48,7 @@ abstract class UserCredentialAbstract
      *
      * @access private
      */             
-    private function _initialize($userProfile) {
+    private function _initialize(iterable $userProfile) {
         $this->_initializeProfile($userProfile);
         $this->_initializeBaseEntropy();
         $this->_initializeBasePasswordPolicy();
@@ -59,11 +59,11 @@ abstract class UserCredentialAbstract
     * 
     * Cyril Ogana <cogana@gmail.com> - 2015-07-18
     *
-    * @param  array / ArrayAccess  $userProfile
+    * @param  iterable  $userProfile
     *
     * @access private
     */
-    private function _initializeProfile($userProfile) {
+    private function _initializeProfile(iterable $userProfile) {
         //validate that user profile has the correct information for password validation
         if (!is_array($userProfile)
             || !isset($userProfile['username'])
@@ -76,6 +76,7 @@ abstract class UserCredentialAbstract
             || !isset($userProfile['account_state'])
             || !isset($userProfile['policyinfo'])
             || !is_array($userProfile['policyinfo'])
+            || !isset($userProfile['platforminfo'])
             || !is_array($userProfile['platforminfo'])
         ) {
             throw new UserCredentialException('The user profile is not properly initialized', 1000);
@@ -158,12 +159,12 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @return array / Object
+     * @return array
      * 
      * @access protected
      * @final
      */
-    final protected function _getBaseEntropy() {
+    final protected function _getBaseEntropy(): array {
 	if (isset($this->_baseEntropySetting)) {
             return $this->_baseEntropySetting;
         }
@@ -174,12 +175,12 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @return array / Object
+     * @return array
      * 
      * @access protected
      * @final
      */
-    final protected function _getBasePasswordPolicy() {
+    final protected function _getBasePasswordPolicy(): array {
 	if (isset($this->_basePasswordPolicy)) {
             return $this->_basePasswordPolicy;
         }
@@ -190,12 +191,12 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @param  array / object entropyObj - array or object implementing ArrayAccess
+     * @param  iterable entropyObj - array or object implementing ArrayAccess
      *
      * @access protected
      * @final
      */ 
-     final protected function _setUdfEntropy($entropyObj) {
+     final protected function _setUdfEntropy(iterable $entropyObj) {
         //initialize if not already initialized as array
         if (!is_array($this->_udfEntropySetting)
            ||
@@ -313,12 +314,12 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @param  array / object entropyObj - array or object implementing ArrayAccess
+     * @param  iterable entropyObj - array or object implementing ArrayAccess
      *
      * @access protected
      * @final
      */ 
-     final protected function _setUdfPasswordPolicy($entropyObj) {
+     final protected function _setUdfPasswordPolicy(iterable $entropyObj) {
         //initialize if not already initialized as array
         if (!is_array($this->_udfPasswordPolicy)
            || 
@@ -376,12 +377,12 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @return array / Object
+     * @return array
      * 
      * @access protected
      * @final
      */
-    final protected function _getUdfEntropy() {
+    final protected function _getUdfEntropy(): array {
         if (isset($this->_udfEntropySetting)) {
             return $this->_udfEntropySetting;
         }
@@ -392,7 +393,7 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @return array / Object
+     * @return iterable
      * 
      * @access protected
      * @final
@@ -408,14 +409,14 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-18
      *
-     * @param True or false to toggle the attribute
+     * @param bool to toggle the attribute
      *
      * @return void
      * 
      * @access protected
      * @final
      */
-    final protected function _setBaseEntropyOverride($toggle) {
+    final protected function _setBaseEntropyOverride(bool $toggle) {
         if (isset($this->_baseEntropyOverride)
            && is_bool($toggle)
         ) {
@@ -433,7 +434,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-    final protected function _getBaseEntropyOverride() {
+    final protected function _getBaseEntropyOverride(): bool {
 	if (isset($this->_baseEntropyOverride)) {
             return $this->_baseEntropyOverride;
         }
@@ -451,7 +452,7 @@ abstract class UserCredentialAbstract
      *
      * @access private
      */	
-    private function _regexBuildPattern($patternCode, $matchCount) {
+    private function _regexBuildPattern(int $patternCode, int $matchCount): string {
         $patternRegex = '';
 
         switch ($patternCode) {
@@ -492,7 +493,7 @@ abstract class UserCredentialAbstract
     * @access protected
     * @final
     */	
-    final protected function  _getPasswordEntropyDescription(){
+    final protected function  _getPasswordEntropyDescription(): string {
         $entropyObj = $this->_getUdfEntropy();
         
         $description    = 'The password entropy requires at minimum, the following: ';
@@ -508,24 +509,24 @@ abstract class UserCredentialAbstract
         }
         
         if ($entropyObj['uppercase']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true?  false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true?  false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $uppercaseLen   = $entropyObj['uppercase']['min_len'];
             $description   .= "$concatenator at least $uppercaseLen uppercase characters";
             $hasEntropy     = true;     
         }
         
         if ($entropyObj['numeric']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true ? false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true ? false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $numericLen     = $entropyObj['numeric']['min_len'];
             $description   .= "$concatenator at least $numericLen numeric characters";
             $hasEntropy     = true;     
         }
 
         if ($entropyObj['special']['min_len'] > 0) {
-            $isFirstEntropy = $isFirstEntropy == true ? false : true;
-            $concatenator   = $isFirstEntropy == true ? ''    : ',';
+            $isFirstEntropy = $isFirstEntropy === true ? false : true;
+            $concatenator   = $isFirstEntropy === true ? ''    : ',';
             $specialLen     = $entropyObj['special']['min_len'];
             $description   .= "$concatenator at least $specialLen special characters";
             $hasEntropy     = true;     
@@ -548,7 +549,7 @@ abstract class UserCredentialAbstract
     * @access protected
     * @final
     */    
-    final protected function _getPasswordLengthDescription(){
+    final protected function _getPasswordLengthDescription(): string{
         $entropyObj = $this->_getUdfEntropy();
         
         if ($entropyObj['min_pass_len'] > 0) {
@@ -568,7 +569,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-    final protected function _getPasswordCharacterRepeatDescription() {
+    final protected function _getPasswordCharacterRepeatDescription(): string {
         $entropyObj = $this->_getUdfEntropy();
         
         if ($entropyObj['max_consecutive_chars'] > 0) {
@@ -588,7 +589,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-    final protected function _getPasswordCharacterClassRepeatDescription() {
+    final protected function _getPasswordCharacterClassRepeatDescription(): string {
         $entropyObj = $this->_getUdfEntropy();
         
         if ($entropyObj['max_consecutive_chars_of_same_class'] > 0) {
@@ -604,12 +605,14 @@ abstract class UserCredentialAbstract
     * Cyril Ogana <cogana@gmail.com>
     * 2015-07-18
     *    
-    * @return string
+    * @param string policyType - The policy type for which we want a string description
+    * 
+     * @return string
     *
     * @access protected
     * @final
     */        
-    final protected function _getPasswordPolicyDescription($policyType){
+    final protected function _getPasswordPolicyDescription(string $policyType): string{
         $policyObj = $this->_getUdfPasswordPolicy();
 
         switch ($policyType) {
@@ -649,7 +652,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-     final protected function _validateEntropy(){
+     final protected function _validateEntropy(): bool{
         //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -753,7 +756,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-    final protected function _validateEntropyTotp() {
+    final protected function _validateEntropyTotp(): bool {
         //in case we are using multi-factor, validate that all options are set
         if (
             isset($this->_udfEntropySetting['multi_factor_on'])
@@ -788,7 +791,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */    
-    final protected function _validateLength() {
+    final protected function _validateLength(): bool {
         //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -821,7 +824,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */      
-    final protected function _validateConsecutiveCharacterRepeat() {
+    final protected function _validateConsecutiveCharacterRepeat(): bool {
         //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -892,7 +895,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */    
-    final protected function _validatePolicy() {
+    final protected function _validatePolicy(): bool {
         //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -940,7 +943,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */      
-    final protected function _validatePolicyAtChange() {
+    final protected function _validatePolicyAtChange(): bool {
         //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -979,7 +982,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */       
-    final protected function _canChangePassword() {
+    final protected function _canChangePassword(): bool {
          //validate that required indices exist
         if (!isset($this->_userProfile['username'])
             || !isset($this->_userProfile['password'])
@@ -1013,7 +1016,7 @@ abstract class UserCredentialAbstract
      * @access protected
      * @final
      */
-    final protected function _validateTenancy() {
+    final protected function _validateTenancy(): bool {
         $userProfile = $this->_userProfile;
         
         //Verify if the password was changed today or server has been futuredated
@@ -1045,7 +1048,7 @@ abstract class UserCredentialAbstract
      * @access public
      * @static
      */
-    public static function passwordStrength($passwordString, $strengthAdapter = \PHPASS_PASSWORDSTRENGTHADAPTER_NIST) {
+    public static function passwordStrength(string $passwordString, int $strengthAdapter = \PHPASS_PASSWORDSTRENGTHADAPTER_NIST): int {
         if ($strengthAdapter == \PHPASS_PASSWORDSTRENGTHADAPTER_WOLFRAM) {
             $strengthAdapter = new Strength\Adapter\Wolfram;        
         } elseif ($strengthAdapter == \PHPASS_PASSWORDSTRENGTHADAPTER_NIST) {
@@ -1063,12 +1066,14 @@ abstract class UserCredentialAbstract
      * Cyril Ogana <cogana@gmail.com>
      * 2015-07-24
      * 
+     * @param int keyLength - Length of the random key 
+     * 
      * @return string
      * 
      * @access public
      * @static
      */
-    public static function generateRandomKey($keyLength = null) {
+    public static function generateRandomKey(int $keyLength): string {
         if (
             !(is_int($keyLength))
             && !($keyLength > 0)
@@ -1092,7 +1097,7 @@ abstract class UserCredentialAbstract
      * @access public
      * @static
      */
-    public static function generateToken($userName, $keyString) {
+    public static function generateToken(string $userName, string $keyString): string {
         $userNameCast = (string) $userName;
         $keyStringCast = (string) $keyString;
         $multiOtpObj = new MultiotpWrapper($keyStringCast);
@@ -1102,23 +1107,23 @@ abstract class UserCredentialAbstract
     /**
         * Abstract methods for concrete implementation
         */
-    abstract public function getBaseEntropy();
-    abstract public function getBaseEntropyOverride();
-    abstract public function getBasePasswordPolicy();
-    abstract public function getPasswordEntropyDescription();
-    abstract public function getPasswordLengthDescription();
-    abstract public function getPasswordPolicyDescription($policyType);
-    abstract public function getUdfEntropy();
-    abstract public function getUdfPasswordPolicy();
-    abstract public function setBaseEntropyOverride($toggle);
-    abstract public function setUdfEntropy($entropyObj);
-    abstract public function setUdfPasswordPolicy($entropyObj);
-    abstract public function validateEntropy();
-    abstract public function validateEntropyTotp();
-    abstract public function validateLength();
-    abstract public function validateConsecutiveCharacterRepeat();
-    abstract public function validatePolicy();
-    abstract public function validatePolicyAtChange();
-    abstract public function validateTenancy();
-    abstract public function canChangePassword();
+    abstract public function getBaseEntropy(): array;
+    abstract public function getBaseEntropyOverride(): bool;
+    abstract public function getBasePasswordPolicy(): array;
+    abstract public function getPasswordEntropyDescription(): string;
+    abstract public function getPasswordLengthDescription(): string;
+    abstract public function getPasswordPolicyDescription(string $policyType): string;
+    abstract public function getUdfEntropy(): array;
+    abstract public function getUdfPasswordPolicy(): array;
+    abstract public function setBaseEntropyOverride(bool $toggle);
+    abstract public function setUdfEntropy(array $entropyObj);
+    abstract public function setUdfPasswordPolicy(array $entropyObj);
+    abstract public function validateEntropy(): bool;
+    abstract public function validateEntropyTotp(): bool;
+    abstract public function validateLength(): bool;
+    abstract public function validateConsecutiveCharacterRepeat(): bool;
+    abstract public function validatePolicy(): bool;
+    abstract public function validatePolicyAtChange(): bool;
+    abstract public function validateTenancy(): bool;
+    abstract public function canChangePassword(): bool;
 }
