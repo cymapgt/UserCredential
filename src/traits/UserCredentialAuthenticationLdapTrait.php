@@ -15,12 +15,7 @@ use cymapgt\Exception\UserCredentialException;
 */
 trait UserCredentialAuthenticationLdapTrait {
     protected $ldapAuthenticationHandler = null; //container for LDAP handler e.g. MultiOTP, FreeDSX
-    
-    abstract public function initialize();  //classes using this trait must declare this method
-    abstract public function getCurrentUsername(); //classes using this trait must declare this method
-    abstract public function getCurrentPassword(); //classes using htis trait must declare this method
- 
-    
+  
     /**
      * Authenticate credentials provided by user against a LDAP server
      * 
@@ -30,7 +25,7 @@ trait UserCredentialAuthenticationLdapTrait {
      * @return bool
      * @throws UserCredentialException
      */      
-    protected function authenticateLDAP() {
+    protected function authenticateLDAP(): bool {
         //initialize the LDAP parameters as required by ldap handler
         $this->initializeLdap();
         

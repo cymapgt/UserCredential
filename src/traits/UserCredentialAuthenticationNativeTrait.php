@@ -20,7 +20,7 @@ trait UserCredentialAuthenticationNativeTrait {
      * @return bool
      * @throws UserCredentialException
      */    
-    protected function authenticateNative() {
+    protected function authenticateNative(): bool {
         return \password_verify($this->_inputPassword, $this->_currentPassword);        
     }
 }
