@@ -28,7 +28,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */             
-    public function setUsePassword($flag);
+    public function setUsePassword(bool $flag);
 
     /**
      * function getUsePassword() - Return the use password flag
@@ -39,31 +39,31 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */             
-    public function getUsePassword();
+    public function getUsePassword(): bool;
     
     /**
      * Set the user password, and hash it
      *
      * Cyril Ogana <cogana@gmail.com>- 2014-02-13
      *
-     * @param bool $password - the user password in raw text
+     * @param string $password - the user password in raw text
      *
      * @access public
      */             
-    public function setPassword($password);
+    public function setPassword(string $password);
     
     /**
      * Return the hashed user password
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
-     * @param  $unhashed - if true, return unhashed
+     * @param  bool $unhashed - if true, return unhashed
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * 
      * @access public
      */
-    public function getPassword($unhashed = false);
+    public function getPassword(bool $unhashed = false): string;
     
     /**
      * Set whether this service uses multi factor auth
@@ -74,7 +74,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */
-    public function setMultiFactor($flag);
+    public function setMultiFactor(bool $flag);
     
     /**
      * Provide namespace of the multi factor handler service,which has to implement the interface
@@ -86,7 +86,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public 
      */
-    public function setMultiFactorHandler($handler);
+    public function setMultiFactorHandler(string $handler);
     
     /**
      * Return an instance of the multi factor handler service to use ofr this authentication session
@@ -97,7 +97,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */
-    public function getMultiFactorHandler();
+    public function getMultiFactorHandler(): object;
     
     /**
      * In an array, configure the steps of the multifactor login, passing numeric stage names, types and handler calls
@@ -105,11 +105,11 @@ interface UserCredentialAuthenticationInterface
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
-     * @param Array $stages - The stages of the log in session
+     * @param array $stages - The stages of the log in session
      * 
      * @access public
      */
-    public function setMultiFactorStages(Array $stages);
+    public function setMultiFactorStages(array $stages);
     
     /**
      *  return the multi factor stages array
@@ -120,7 +120,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */
-    public function getMultiFactorStages();
+    public function getMultiFactorStages(): array;
     
     /**
      * initialize the service, bootstrap before any processing
@@ -136,6 +136,8 @@ interface UserCredentialAuthenticationInterface
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
+     *  @return bool
+     * 
      * @access public
      */
     public function authenticate();
@@ -149,7 +151,7 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */
-    public function setCurrentUsername($username);
+    public function setCurrentUsername(string $username);
     
     /**
      * get the current username
@@ -160,27 +162,27 @@ interface UserCredentialAuthenticationInterface
      * 
      * @access public
      */
-    public function getCurrentUsername();
+    public function getCurrentUsername(): string;
     
     /**
      * set the current password
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
-     * @param mixed  $password - The current password hash
+     * @param string  $password - The current password hash
      * 
      * @access public
      */
-    public function setCurrentPassword($password);
+    public function setCurrentPassword(string $password);
     
     /**
      * return the current password (hashed)
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-14
      * 
-     * @return mixed - The hashed password
+     * @return string - The hashed password
      * 
      * @access public
      */
-    public function getCurrentPassword();
+    public function getCurrentPassword(): string;
 }

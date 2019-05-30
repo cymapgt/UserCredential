@@ -161,13 +161,13 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * Cyril Ogana <cogana@gmail.com> - 2014-02-13
      * 
-     * @param  $unhashed - flag if true, return unhashed
+     * @param  bool $unhashed - flag if true, return unhashed
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * 
      * @access public
      */
-    public function getPassword($unhashed = false) {
+    public function getPassword(bool $unhashed = false): string {
         //unhashed has no bearing, we want it false
         $unhashedForce = false;
         return parent::getPassword($unhashedForce);
@@ -182,7 +182,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * @access public
      */    
-    public function setUserTotpProfile($totpProfile) {
+    public function setUserTotpProfile(array $totpProfile) {
         if (!(is_array($totpProfile))) {
             throw new UserCredentialException('The TOTP Profile must be an array', 2104);
         }
@@ -198,7 +198,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * @return array
      * @access public 
      */
-    public function getUserTotpProfile() {
+    public function getUserTotpProfile(): array {
         return $this->userTotpProfile;
     }
     
@@ -211,7 +211,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * @access public
      */    
-    public function setEncKeyLength($keyLength) {
+    public function setEncKeyLength(int $keyLength) {
         $keyLengthCast = (int) $keyLength;
         
         if (!($keyLengthCast > 0)) {
@@ -229,7 +229,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * @return int
      * @access public 
      */
-    public function getEncKeyLength() {
+    public function getEncKeyLength(): int {
         return $this->keyLength;
     }
     
@@ -242,7 +242,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * @access public
      */     
-    public function setVerificationHash($verificationHash) {
+    public function setVerificationHash(string $verificationHash) {
         $this->verificationHash = (string) $verificationHash;
     }
     
@@ -254,7 +254,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * @return string
      * @access public 
      */    
-    public function getVerificationHash() {
+    public function getVerificationHash():string {
         return $this->verificationHash;
     }
 
@@ -267,7 +267,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * @access public
      */     
-    public function setCurrentOneTimeToken($verificationToken) {
+    public function setCurrentOneTimeToken(string $verificationToken) {
         $this->currentOneTimeToken = (string) $verificationToken;
     }
     
@@ -276,10 +276,10 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * Cyril Ogana <cogana@gmail.com> - 2015-07-24
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * @access public
      */    
-    public function getCurrentOneTimeToken() {
+    public function getCurrentOneTimeToken(): string {
         return $this->currentOneTimeToken;
     }
     
@@ -292,7 +292,7 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * @access public
      */     
-    public function setOneTimeToken($verificationToken) {
+    public function setOneTimeToken(string $verificationToken) {
         $this->oneTimeToken = (string) $verificationToken;
     }
     
@@ -301,12 +301,12 @@ class UserCredentialSmsTokenLoginService extends UserCredentialPasswordLoginServ
      * 
      * Cyril Ogana <cogana@gmail.com> - 2015-07-24
      * 
-     * @param  $unhashed - flag if true, return unhashed
+     * @param  bool $unhashed - flag if true, return unhashed
      * 
-     * @return mixed - the hashed password
+     * @return string - the hashed password
      * @access public
      */    
-    public function getOneTimeToken($unhashed = false) {
+    public function getOneTimeToken(bool $unhashed = false): string {
         if ((bool) $unhashed === true) {
             return $this->oneTimeToken;
         } else {
