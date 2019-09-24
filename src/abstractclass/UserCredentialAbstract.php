@@ -335,7 +335,7 @@ abstract class UserCredentialAbstract
             if(!is_object($entropyObj)
                 || !($entropyObj instanceof \ArrayAccess)
             ) {
-                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface', 1008);
+                throw new UserCredentialException('The entropy object should be an array or implement ArrayAccess interface', 1001);
             }
         }
 
@@ -852,7 +852,7 @@ abstract class UserCredentialAbstract
         $testVal = preg_match($maxConsecutiveCharsRegex,$this->_userProfile['password']);
 
         if ($testVal === false) {
-            throw new UserCredentialException('A fatal error occured in the password validation', 1018);
+            throw new UserCredentialException('A fatal error occured in the password validation', 1015);
         } elseif ($testVal == true) {
             throw new UserCredentialException('The password violates policy about consecutive character repetitions. '. $this->_getPasswordCharacterRepeatDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
         } else {/*Do nothing*/}
@@ -874,7 +874,7 @@ abstract class UserCredentialAbstract
         $testValSameClass = preg_match($maxConsecutiveCharsSameClassRegex,$this->_userProfile['password']);
 
         if ($testValSameClass === false) {
-            throw new UserCredentialException('A fatal error occured in the password validation', 1018);
+            throw new UserCredentialException('A fatal error occured in the password validation', 1015);
         } elseif ($testValSameClass == true) {
             throw new UserCredentialException('The password violates policy about consecutive repetition of characters of the same class. '. $this->_getPasswordCharacterClassRepeatDescription(), \USERCREDENTIAL_ACCOUNTPOLICY_WEAKPASSWD);
         } else {

@@ -15,7 +15,7 @@ use cymapgt\Exception\UserCredentialException;
 */
 trait UserCredentialAuthenticationLdapTrait {
     protected $ldapAuthenticationHandler = null; //container for LDAP handler e.g. MultiOTP, FreeDSX
-
+  
     /**
      * Authenticate credentials provided by user against a LDAP server
      * 

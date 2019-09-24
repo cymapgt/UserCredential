@@ -7,12 +7,11 @@
 | 1000 | The user profile is not properly initialized  |
 | 1001 | The entropy object should be an array or implement ArrayAccess interface  |
 | 1002 | The minimum password length hasn\'t been set  |
-| 1003 | The minimum allowed consecutive character repetition hasn\'t been set  |
+| 1003 | The maximum allowed consecutive character repetition hasn\'t been set  |
 | 1004 | The uppercase settings must be an array containing toggle and min upper length |
 | 1005 | The lowercase settings must be an array containing toggle and min lower length  |
 | 1006 | The numeric settings must be an array containing toggle and min lower length  |
 | 1007 | The special character settings must be an array containing toggle and min length  |
-| 1008 | The entropy object should be an array or implement ArrayAccess interface  |
 | 1009 | The illegal attempts limit hasn\'t been set  |
 | 1010 | The password reset frequency hasn\'t been set  |
 | 1011 | The password repeat minimum has not been set |
@@ -20,12 +19,11 @@
 | 1013 | The regex pattern is not set|
 | 1015 | A fatal error occured in the password validation  |
 | 1016 | The username and password are not set  |
-| 1018 | A fatal error occured in the password validation  |
 | 1022 | Phpass strength adapter calculator must be NIST or Wolfram. Wrong Flag provivded  |
 | 1023 | Multi factor auth is flagged on, but the encryption key length is not properly initialized  |
-| 1024 |TOTP info is not set in the users profile  |
+| 1024 | TOTP info is not set in the users profile  |
 | 1025 | The encryption key string length for TOTP hashing is too short  |
-| 1026 | The maximum allowed consecutive character repetition for characters of the same class hasn't been set
+| 1026 | The maximum allowed consecutive character repetition for characters of the same class hasn\'t been set
 | 1027 | Tenancy problem with your account. Please contact your Administrator
 
 ### EXCEPTIONS FOR USERCREDENTIAL BASIC PASSWORD LOGIN SERVICE
