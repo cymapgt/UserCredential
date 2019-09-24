@@ -22,12 +22,12 @@
     "description" : "Package for Password authentication policy management",
     "license" : "BSD-3-clause",
     "require" : {
-        "php" : ">=7.1.0",
-        "cymapgt/phpass" : "^6.0.0",
+        "php" : ">=7.2.0",
+        "cymapgt/phpass" : "^7.0.0",
         "freedsx/ldap" : "*"
     },
     "require-dev" : {
-        "phpunit/phpunit" : "7.*",
+        "phpunit/phpunit" : "8.*",
         "geerlingguy/ping" : "*"
     },
     "support" : {
