@@ -27,7 +27,7 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
      * Sets up the fixture, for example, opens a network connection.
      * This method is called before a test is executed.
      */
-    protected function setUp()
+    protected function setUp() : void
     {
         //Make sure that UserCredentialPasswordLoginService is available to your auth plugin and create an instance        
         $this->object = new UserCredentialGoogleAuthLoginService;
@@ -52,7 +52,7 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
      * Tears down the fixture, for example, closes a network connection.
      * This method is called after a test is executed.
      */
-    protected function tearDown()
+    protected function tearDown() : void
     {
     }
    
