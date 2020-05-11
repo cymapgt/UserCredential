@@ -74,10 +74,11 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialGoogleAuthLoginService::initialize
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The usercredential login service is not initialized with all parameters
      */
     public function testInitializeStage1Exception() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The usercredential login service is not initialized with all parameters');
+                        
         /**
          *     When you call setMultiFactor() to true, we require more info than just username, hashed password and password logged
          *     
@@ -124,16 +125,17 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
         
         //because we are in Stage 1 the statuss of multi-factor array should have been set false by the class because we are yet to authenticate
         $mFactorStages = $this->object->getMultiFactorStages();
-        $this->assertInternalType('bool', $mFactorStages[1]['statuss']);
+        $this->assertIsBool($mFactorStages[1]['statuss']);
         $this->assertEquals(false, $mFactorStages[1]['statuss']);       
     }
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialGoogleAuthLoginService::initialize
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The user TOTP profile is not initialized properly
      */
     public function testInitializeStage2Exception() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The user TOTP profile is not initialized properly');
+                        
         /**
          *     When you call setMultiFactor() to true, we require more info than just username, hashed password and password logged
          *     
@@ -270,10 +272,11 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialGoogleAuthLoginService::authenticate
-     * @expectedException cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Cannot validate a TOTP token when username is not set
      */    
     public function testAuthenticateStage2UsernameNotSetException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Cannot validate a TOTP token when username is not set');
+                        
         //An Exception Should Be Thrown if CurrrentUsername is not set because username is used to fetch the token from MultiOTP
         $this->object->setCurrentUsername('');
         $this->object->setMultiFactor(true);
@@ -312,10 +315,11 @@ class UserCredentialGoogleAuthLoginServiceTest extends \PHPUnit\Framework\TestCa
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialGoogleAuthLoginService::authenticate
-     * @expectedException cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The TOTP token for the current user does not exist
      */    
     public function testAuthenticateStage2TokenNotCreatedException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The TOTP token for the current user does not exist');
+                        
         //An Exception Should Be Thrown if the token for a given username has not been created. Your application should handle this by calling $multiOtpWrapper->CreateToken($userName)
         $this->object->setCurrentUsername('alba');
         $this->object->setMultiFactor(true);

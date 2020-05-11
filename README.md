@@ -17,7 +17,7 @@ the SMS OTP and Google Authenticator TOTP services that we have provided with th
 
 ### Install application via Composer
 
-    require "cymapgt/usercredential": "1.*"
+    require "cymapgt/usercredential": "*"
 
 ## Usage
 

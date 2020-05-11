@@ -67,10 +67,11 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialPasswordLoginService::initialize
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessge The usercredential login service is not initialized with all parameters
      */
     public function testInitializeException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The usercredential login service is not initialized with all parameters');
+        
         //if you call initialize without setting the username, password and keyed in password, an exception should be thrown
         $this->object->initialize();
     } 
@@ -94,10 +95,11 @@ class UserCredentialPasswordLoginServiceTest extends \PHPUnit\Framework\TestCase
      * This tests that without proper initialization of LDAP settings, a UserCredentialException will be thrown. 
      * 
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialPasswordLoginService::authenticate
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The LDAP feature of the usercredential login service is not initialized with all parameters
      */
     public function testInitializeLdapException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The LDAP feature of the usercredential login service is not initialized with all parameters');
+                
         $this->object->setPasswordAuthenticationPlatform(\USERCREDENTIAL_PASSWORDLOGINPLATFORM_LDAP);
         $this->object->setCurrentUserName('rhossis');
         $this->object->setCurrentPassword($this->password);        

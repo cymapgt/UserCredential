@@ -21,8 +21,8 @@ trait UserCredentialAuthenticationTrait {
     
     abstract public function initialize();  //classes using this trait must declare this method
     abstract public function getCurrentUsername(): string; //classes using this trait must declare this method
-    abstract public function getCurrentPassword(): string; //classes using htis trait must declare this method
-            
+    abstract public function getCurrentPassword(): string; //classes using this trait must declare this method
+       
     /**
      * Authenticate a users username/password credentials using the requested platform
      * 
