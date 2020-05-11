@@ -59,7 +59,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetBaseEntropy()
     {
         $baseEntropy = $this->object->getBaseEntropy();
-        $this->assertInternalType('array', $baseEntropy);
+        $this->assertIsArray($baseEntropy);
         $this->assertEquals(9, count($baseEntropy));
         $this->assertEquals('min_pass_len', key($baseEntropy));
         next($baseEntropy);
@@ -86,7 +86,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetBaseEntropyOverride()
     {
         $baseEntropyOverride = $this->object->getBaseEntropyOverride();
-        $this->assertInternalType('bool', $baseEntropyOverride);
+        $this->assertIsBool($baseEntropyOverride);
     }
 
     /**
@@ -95,7 +95,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetBasePasswordPolicy()
     {
         $basePasswordPolicy = $this->object->getBasePasswordPolicy();
-        $this->assertInternalType('array', $basePasswordPolicy);
+        $this->assertIsArray($basePasswordPolicy);
         $this->assertEquals(4, count($basePasswordPolicy));
         $this->assertEquals('illegal_attempts_limit', key($basePasswordPolicy));
         next($basePasswordPolicy);
@@ -112,7 +112,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUdfEntropy()
     {
         $udfEntropy = $this->object->getUdfEntropy();
-        $this->assertInternalType('array', $udfEntropy);
+        $this->assertIsArray($udfEntropy);
         $this->assertEquals(7, count($udfEntropy));
         $this->assertEquals('min_pass_len', key($udfEntropy));
         next($udfEntropy);
@@ -135,7 +135,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     public function testGetUdfPasswordPolicy()
     {
         $udfPasswordPolicy = $this->object->getBasePasswordPolicy();
-        $this->assertInternalType('array', $udfPasswordPolicy);
+        $this->assertIsArray($udfPasswordPolicy);
         $this->assertEquals(4, count($udfPasswordPolicy));
         $this->assertEquals('illegal_attempts_limit', key($udfPasswordPolicy));
         next($udfPasswordPolicy);
@@ -153,7 +153,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     {
         $this->object->setBaseEntropyOverride(true);
         $baseEntropyOverride = $this->object->getBaseEntropyOverride();
-        $this->assertInternalType('bool', $baseEntropyOverride);
+        $this->assertIsBool($baseEntropyOverride);
         $this->assertEquals(true, $baseEntropyOverride);
     }
 
@@ -162,16 +162,16 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidateEntropy()
     {
-        $this->assertInternalType('bool', $this->object->validateEntropy());        
+        $this->assertIsBool($this->object->validateEntropy());        
         $this->assertEquals(true, $this->object->validateEntropy());
     }
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateEntropy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The password does not meet the minimum entropy.
      */
     public function testValidateEntropyException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The password does not meet the minimum entropy.');
         $userProfileWeak = array("username"=>"c.ogana",
                           "password"=>"weak_password",
                           "fullname"=>"Cyril Ogana",
@@ -188,7 +188,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateLength
      */
     public function testValidateLength() {
-        $this->assertInternalType('bool', $this->object->validateLength());
+        $this->assertIsBool($this->object->validateLength());
         $this->assertEquals(true, $this->object->validateLength());
     }
     
@@ -196,16 +196,17 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
      */
     public function testValidateConsecutiveCharacterRepeat() {
-        $this->assertInternalType('bool', $this->object->validateConsecutiveCharacterRepeat());
+        $this->assertIsBool($this->object->validateConsecutiveCharacterRepeat());
         $this->assertEquals(true, $this->object->validateConsecutiveCharacterRepeat());
     }
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateLength
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The password does not meet required length.
      */
     public function testValidateLengthException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The password does not meet required length.');
+        
         $userProfileWeak = array("username"=>"c.ogana",
                           "password"=>"tinypw",
                           "fullname"=>"Cyril Ogana",
@@ -220,10 +221,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The password violates policy about consecutive character repetitions.
      */ 
     public function testValidateConsecutiveCharacterRepeatException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The password violates policy about consecutive character repetitions.');
+        
         //here we repeat 2 characters
         $userProfileAlmostWeak = array("username"=>"c.ogana",
                           "password"=>"%stron9Pa55sButRepetition!sBaD2015",
@@ -251,10 +253,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateConsecutiveCharacterRepeat()
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The password violates policy about consecutive repetition of characters of the same class.
      */ 
     public function testValidateConsecutiveCharacterClassRepeatException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The password violates policy about consecutive repetition of characters of the same class.');
+                
         //here we repeat 2 characters
         $userProfileAlmostWeak = array("username"=>"c.ogana",
                           "password"=>"%stron9Pa55sButRepetition!sBaD2015",
@@ -282,10 +285,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The account has exceeded login attempts and is locked.
      */
     public function testValidatePolicyLoginAttemptSuspendedException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The account has exceeded login attempts and is locked.');
+                        
         $userProfileWeak = array("username"=>"c.ogana",
                           "password"=>"tinypw",
                           "fullname"=>"Cyril Ogana",
@@ -300,10 +304,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The password has expired and must be changed
      */
     public function testValidatePolicyPasswordExpiredException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The password has expired and must be changed');
+                                
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"m&$1eLe6Ke()",
                           "fullname"=>"Cyril Ogana",
@@ -323,10 +328,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Password cannot contain username or any of your names
      */
     public function testValidateEntropyPasswordContainsUsernameException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Password cannot contain username or any of your names');
+                                
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"1CyriL",
                           "fullname"=>"Cyril Ogana",
@@ -346,10 +352,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Password cannot contain username or any of your names
      */
     public function testValidateEntropyPasswordContainsReverseNameException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Password cannot contain username or any of your names');
+                                
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"1LiryC!",
                           "fullname"=>"Cyril Ogana",
@@ -369,10 +376,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Password cannot contain username or any of your names
      */
     public function testValidateEntropyPasswordContainsReverseUsernameException() {        
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Password cannot contain username or any of your names');
+                                
         $userProfile1 = array("username"=>"c.ogana",
                           "password"=>"anago.c",
                           "fullname"=>"Cyril Ogana",
@@ -392,10 +400,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validatePolicyAtChange
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage User cannot repeat any of their 
      */
     public function testValidatePolicyPasswordRepeatException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('User cannot repeat any of their');
+                                
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"mno",
                           "fullname"=>"Cyril Ogana",
@@ -456,16 +465,17 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
                           "account_state"=>\USERCREDENTIAL_ACCOUNTSTATE_LOGGEDIN);        
         $this->object = new UserCredentialManager($userProfile); 
         $canChangePassword = $this->object->canChangePassword();
-        $this->assertInternalType('bool', $canChangePassword);
+        $this->assertIsBool($canChangePassword);
         $this->assertEquals(false, $canChangePassword);
     }
     
     /**
      * @covers \cymapgt\core\application\authentication\UserCredential\UserCredentialManager::validateTenancy
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Tenancy problem with your account. Please contact your Administrator
      */ 
     public function testValidateTenancyException() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Tenancy problem with your account. Please contact your Administrator');
+                                
         $userProfile = array("username"=>"c.ogana",
                           "password"=>"mno",
                           "fullname"=>"Cyril Ogana",
@@ -536,10 +546,11 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential::__construct
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage Multi factor auth is flagged on, but the encryption key length is not properly initialized!
      */
     public function testSetMultiFactorKeyLengthExceptionIfOn() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('Multi factor auth is flagged on, but the encryption key length is not properly initialized!');
+                                
         $entropyObj = Array
         (
             'min_pass_len' => 8,
@@ -620,7 +631,7 @@ class UserCredentialManagerTest extends \PHPUnit\Framework\TestCase
      * @covers  cymapgt\core\application\authentication\UserCredential::validateEntropyTotp
      */
     public function testValidateEntropyTotp() {
-        $this->assertInternalType('bool', $this->object->validateEntropyTotp());        
+        $this->assertIsBool($this->object->validateEntropyTotp());        
         $this->assertEquals(true, $this->object->validateEntropyTotp());
     }
     

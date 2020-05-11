@@ -36,10 +36,11 @@ class UserCredentialSmsTokenLoginServiceTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialSmsTotpService::initialize
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The multi factor stages register is initialized with an an unknown state
      */
     public function testInitializeStage1Exception() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The multi factor stages register is initialized with an an unknown state');
+        
         /**
          *     When you call setMultiFactor() to true, we require more info than just username, hashed password and password logged
          *     
@@ -87,7 +88,7 @@ class UserCredentialSmsTokenLoginServiceTest extends \PHPUnit\Framework\TestCase
         
         //because we are in Stage 1 the statuss of multi-factor array should have been set false by the class because we are yet to authenticate
         $mFactorStages = $this->object->getMultiFactorStages();
-        $this->assertInternalType('bool', $mFactorStages[1]['statuss']);
+        $this->assertIsBool($mFactorStages[1]['statuss']);
         $this->assertEquals(false, $mFactorStages[1]['statuss']);
     }
 
@@ -131,26 +132,27 @@ class UserCredentialSmsTokenLoginServiceTest extends \PHPUnit\Framework\TestCase
          */
         
         //as per above structure, assert the unsuccessful login        
-        $this->assertInternalType('array', $authResult);
+        $this->assertIsArray($authResult);
         $this->assertEquals(false, $authResult[1]['statuss']);
         $this->object->setPassword('123456');
         $this->object->initialize();
         $authResult2 = $this->object->authenticate();
         
         //as per the above structure, assert successful login for Stage 1
-        $this->assertInternalType('array', $authResult2);
+        $this->assertIsArray($authResult2);
         $this->assertEquals(true, $authResult2[1]['statuss']);
-        $this->assertInternalType('array', $authResult2[2]);
+        $this->assertIsArray($authResult2[2]);
         $this->assertArrayHasKey('enc_key', $authResult2[2]);
         $this->assertArrayHasKey('statuss', $authResult2[2]);        
     }
     
     /**
      * @covers cymapgt\core\application\authentication\UserCredential\services\UserCredentialSmsTotpService::initialize
-     * @expectedException \cymapgt\Exception\UserCredentialException
-     * @expectedExceptionMessage The user TOTP profile is not initialized properly
      */
     public function testInitializeStage2Exception() {
+        $this->expectException('\cymapgt\Exception\UserCredentialException');
+        $this->expectExceptionMessage('The user TOTP profile is not initialized properly');
+                
         /**
          *     When you call setMultiFactor() to true, we require more info than just username, hashed password and password logged
          *     
